@@ -4,6 +4,7 @@
 //  Copyright (c) 2015 TheBestGroup. All rights reserved.
 //
 #include <stdio.h>
+
 struct items{
     char name[10];
     int amount;
