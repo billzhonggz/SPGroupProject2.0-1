@@ -195,7 +195,7 @@ void GUI_ManagerMain()
 	scanf("%d",&managerMainInput);
 	switch (managerMainInput)
 	{
-		case 1: /*GUI_ManagerInventory()*/printf("Debug mode: Go to submenu inventory.\n");
+		case 1: GUI_ManagerInventory()/*printf("Debug mode: Go to submenu inventory.\n")*/;
 			break;
 		case 2: /*GUI_ManagerPrice()*/printf("Debug mode: Go to submenu price.\n");
 			break;
@@ -206,6 +206,81 @@ void GUI_ManagerMain()
 		case 5: Login();
 			break;
 		default: printf("Invalid input!\n");
+	}
+}
+
+void GUI_ManagerInventory()
+{
+	system("cls");
+	printf("  ************************************  \n");
+	printf("  *                                  *  \n");
+	printf("  *  WELCOME TO THE GIT DRINK STORE  *  \n");
+	printf("  *                                  *  \n");
+	printf("  ************************************  \n");
+	printf("\n");
+	printf("        ****MANAGER INTERFACE****       \n");
+	printf("\n");
+	printf("        ****INVENTORY CHANGE****        \n");
+	printf("\n");
+	//Print out current item list.
+	struct items *changeInventory;
+	changeInventory = LoadItemList();
+	int id = 1;
+	printf("ID  Item         Amount    Price  \n");
+	printf("0   Go back\n");
+	do
+	{
+		printf("%d   %s            %d       %l2f   \n", id, changeInventory->name, changeInventory->amount, changeInventory->price);
+		changeInventory = changeInventory->next;
+		id++;
+	} while (changeInventory == NULL);
+	printf("\n");
+	//Get user input ID.
+	printf("Type ID number to select...\n");
+	printf("\n");
+	printf("INPUT   \n");
+	int changeID;
+	scanf("%d", &changeID);
+	//Search and print out requesting item.
+	struct items *beforeChangeItem;
+	beforeChangeItem=SearchItem(changeID);
+	printf("Item you want to change is %s, current inventory is %d.\n", beforeChangeItem->name, beforeChangeItem->amount);
+	printf("\n");
+	//Change inventory by increase/decrease.
+	printf("INPUT CHANGES: INCREASE(POSITIVE INTEGER) / DECREASE(NEGATIVE INTEGER)  ");
+	int inventoryChange;
+	scanf("%d", &inventoryChange);
+	int changeReturn;
+	changeReturn = ChangeAmount(beforeChangeItem, inventoryChange, changeID);
+	if (changeReturn == -1)
+		printf("Change inventory failed: ID matching failed.\n");
+	if (changeReturn == -2)
+		printf("Change inventory failed: No enough initial inventory.\n");
+	if (changeReturn == 0)
+		printf("Change inventory succeed.\n");
+	//Print out changed item to show result.
+	struct items *afterChangeItem;
+	afterChangeItem = SearchItem(changeID);
+	printf("Inventory of item %s has changed to %d.\n", afterChangeItem->name, afterChangeItem->amount);
+	printf("\n");
+	printf("What do you want to do next?\n");
+	printf("\n");
+	printf("1. Change other item(s)' inventory\n2. Go back to manager menu\n3. Go back to main menu\n");
+	printf("\n");
+	printf("INPUT  ");
+	//Exit this function.
+	int inventoryBack;
+	scanf("%d", &inventoryBack);
+	switch (inventoryBack)
+	{
+		case 1: GUI_ManagerInventory();
+			break;
+		case 2: GUI_CustomerMain();
+			break;
+		case 3: Login();
+			break;
+		default: printf("Invalid input!\n");
+			break;
 	}
 }
 
