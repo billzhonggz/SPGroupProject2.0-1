@@ -8,5 +8,5 @@
 ;administrator username
 #userNameroot
 ;password(SHA-256)
-#password helloworld
+#password 111111
 #string helloWorld
