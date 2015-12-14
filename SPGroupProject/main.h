@@ -43,18 +43,29 @@ int CheckPassword(char *password);
 		// return 1 username or passworld error
 
 struct items *LoadItemList();
-        //This function reads the item list from a file and return the address of the first item in the list.
-        //Returns:
-        //Return the address of the first item if reads the file into memory successfully.
-        //Return NULL if can't open the file. File may not exist or is not in the right syntax.
+	//This function reads the item list from a file and return the address of the first item in the list.
+	//Augments definition:
+		//FILE* list:       Point to the open file "item.dat".
+		//struct* head:     Will be return as the head of the items' linklist.
+		//struct* node1:    Using it while creating the linklist.
+		//struct* node2:    Using it while creating the linklist.
+		//struct* p: Store the previous address while update the node1.
+	//Returns:
+		//Return the address of the first item if reads the file into memory successfully.
+		//Return NULL if can't open the file. File may not exist or is not in the right syntax.
 
-int StorageItemList();
-        //This function save the item list in the memory into the file.
-        //Returns:
-        //Return 0 if saved successfully.
-        //Return -1 if can't save the file.
-        //Return -2 if any other errors occured.
-
+int StorageItemList(struct items* head);
+	//This function save the item list in the memory into the file.
+	//Augments definition:
+		//FILE*list:          Creat a file named "item.dat".
+		//struct items* head: The head of the linkedlist.
+	//Returns:
+		//Return 0:           Saved successfully.
+		//Return -1:          Can't save the file.
+void FreeItems(struct items* head);
+	//Free every node in a linklist.
+	//Augments definition:
+		//struct items* head: The head of the linkedlist.
 
     //GUI:
 
@@ -84,41 +95,28 @@ struct items *SearchItem(int id);
     //Items Data Change:
 
 int AddItem(struct items* head,char itemName[], int initialAmount, double initialPrice);
-        //This function adds a new good into the end of the list.
-        //Augments definition:
-        //char goodsName[]: The name of the item.
-        //int initialAmount: The initial amount of the item.
-        //float initialPrice: The initial Price of the amount.
-        //Returns:
-        //Return 0: A item has been added successfully.
-        //Return -1: There is something with exactly the same name.
-        //Return 1: Any other errors.
-
-int DeleteItem(struct items* head,int itemID);
-        //This function delete an item from the list basing on the name inputed.
-
-
-int AddItem(struct items* head,char itemName[], int initialAmount, double initialPrice);
-        //This function adds a new good into the end of the list.
-        //Augments definition:
-            //struct items* head:  The head address of the item list, then change it to the new item's address.
-            //char itemName[]:     The name of the new good.
-            //int initialAmount:   The initial amount of the good.
-            //double initialPrice: The initial Price of the amount.
-        //Returns:
-            //Return 0:            An good has been added successfully.
-            //Return -1:           There is something with exactly the same name.
+	//This function adds a new good into the end of the list.
+	//Augments definition:
+		//struct items* head:  The head address of the item list, then change it to the new item's address.
+		//char itemName[]:     The name of the new good.
+		//int initialAmount:   The initial amount of the good.
+		//double initialPrice: The initial Price of the amount.
+	//Returns:
+		//Return 0:            An good has been added successfully.
+		//Return -1:           There is something with exactly the same name.
 
 int DeleteItem(struct items* head,int itemID);
         //This function delete an item from the list basing on the ID inputed.
-        //Augments:
-            //struct items* head: The head address of the item list, then change it to the deleted item's address.
-            //struct items* p:     The address of the item before the deleted item.
-            //int itemID:         The itemIDth item need to be deleted, regard the first one's ID as 1.
-        //Returns:
-            //Return 0:           Successfully delete the target item.
-            //Retrun -1:          Can't find the item with the inputed ID.
-        //How it work: Search the list for the item with the inputed ID, delete the struct of the item, and link the former and later items together.
+	//Augments definition:
+		//struct items* head: The head address of the item list, then change it to the deleted item's address.
+		//struct items* p:     The address of the item before the deleted item.
+		//int itemID:         The itemIDth item need to be deleted, regard the first one's ID as 1.
+	//Returns:
+		//Return 0:           Successfully delete the target item.
+		//Retrun -1:          Can't find the item with the inputed ID.
+	//How it work: Search the list for the item with the inputed ID, delete the struct of the item, and link the former and later items to
+
+
 
 int ChangeAmount(struct items* head,int difference, int itemID);
         //This function changes a thing's amount.
@@ -131,9 +129,6 @@ int ChangeAmount(struct items* head,int difference, int itemID);
             //Return -1:          Can't find the item with the inputed ID.
             //Return -2:          The amount is not enough to consume.
 
-
-int ChangePrice(struct items* head,int price, int itemID);
-        //This function changes a thing's amount.
 
 int ChangePrice(struct items* head,double price, int itemID);
         //This function changes a thing's price.
