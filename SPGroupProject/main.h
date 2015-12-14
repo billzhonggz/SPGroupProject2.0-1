@@ -18,18 +18,18 @@ struct items{
 int ErrorInformation(char *info);
 		// This function deal with the error information
 
-int InitializeInt(char *variableName);
+int InitializeInt(char *variableName); 
         // This function load initialize setting from iniFile.
-		// If anyone used the globle variable, please contact with Covey.
-		// return 0 NOT ERROR.
-		// ERROR printf error and exit the program.
-char InitializeChar(char *variableName, char *p);
-		// Same as above this function get a type of char.
-int ChangeConfigInt();
+		// If anyone used the globle variale, please contact with Covey.
+		// return 0 NOT ERROR
+		// ERROR printf error and exit the program
+int InitializeChar(char *variableName, char *p);
+		// Same as above this function get a type of char
+int ChangeConfigInt(char *variableName, int value);
 		// use to change config value with type int
         // Return 0 if successfully.
         // Return 1 if errors occured.
-int ChangeConfigChar();
+int ChangeConfigChar(char *variableName, char *p);
 		// use to change config value with type char
 		// Return 0 if successfully.
         // Return 1 if errors occured.
@@ -37,7 +37,7 @@ int ChangeConfigChar();
 int FirstSettingPage();
 		// used to get administrator username and passworld
 		// get initial setting
-int CheckPasswrold(char *userName, char passworld);
+int CheckPassword(char *password);
 		// return 0 pass
 		// return 1 username or passworld error
 
@@ -67,7 +67,6 @@ int FirstScreen();
         // Other: error.
 
 int Login();//Choosing Customer or Manager GUI.
-int pwdVerify(char *pwd);//Check password. --By Bill.
 void GUI_Customer();//Customer interface.
 void GUI_Manager();//Managing interface.
         //Customer and Manager GUI are used to:
@@ -75,8 +74,27 @@ void GUI_Manager();//Managing interface.
         //2. Read orders.
         //3. Call relative functions to excute the function.
         //4. Display result of the excution to the screen by called fuctions' return values.
+int SearchItem(int id);
+		//This function is used to search linkedlist "items" by id.
+		//Return NULL when failed. Return address of result when succeed. 
+		//Created by Bill. Incomplication is in GUI.cpp.
 
     //Items Data Change:
+
+int AddItem(struct items* head,char itemName[], int initialAmount, double initialPrice);
+        //This function adds a new good into the end of the list.
+        //Augments definition:
+        //char goodsName[]: The name of the item.
+        //int initialAmount: The initial amount of the item.
+        //float initialPrice: The initial Price of the amount.
+        //Returns:
+        //Return 0: A item has been added successfully.
+        //Return -1: There is something with exactly the same name.
+        //Return 1: Any other errors.
+
+int DeleteItem(struct items* head,int itemID);
+        //This function delete an item from the list basing on the name inputed.
+
 
 int AddItem(struct items* head,char itemName[], int initialAmount, double initialPrice);
         //This function adds a new good into the end of the list.
@@ -111,8 +129,13 @@ int ChangeAmount(struct items* head,int difference, int itemID);
             //Return -1:          Can't find the item with the inputed ID.
             //Return -2:          The amount is not enough to consume.
 
+
+int ChangePrice(struct items* head,int price, int itemID);
+        //This function changes a thing's amount.
+
 int ChangePrice(struct items* head,double price, int itemID);
         //This function changes a thing's price.
+
         //Augments definition:
             //struct items* head: The head address of the item list, then change it to the price changed item's address.
             //int price:          The price after change.

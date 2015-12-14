@@ -9,48 +9,31 @@
 #include "main.h"
 
 int main(int argc, const char * argv[]) {
-    
-    //Read .dat file:
-	int firstLogin = InitializeInt("#firstLogin");
+	// example of de. a variable of type int
+	// notice that: suggest to add "#" before variable name
+	int softwareStatus = InitializeInt("#softwareStatus");
 	int debugMode      = InitializeInt("#debugMode");
-    
-    char string[20];
-    InitializeChar("#string",string);
+	// test-------------------------------------------------------------
+	printf("The value of softwareStatus is %d\n",softwareStatus);
+    printf("The value of debugMode is %d\n",debugMode);
 
-	printf("Debug:Done.");
-    
-    //Decide wether go into firstScreen().
-    /*if(firstLogin)
-    {
-        if(FirstScreen()!=0)
-        {
-            ErrorInformation("Error in FirstScreen(firstLogin)/n");
-            printf("The value of firstLogin is %d\n",firstLogin);
-            return 0;
-        }
-        else
-        {
-            firstLogin = 0;//Run the firstScreen() successfully, never run it after this time.
-        }
-    }*/
-    
-    //Start Login & go into GUI:
-    /*int loginStatus;
-    switch(loginStatus = Login())
-    {
-        case 0:
-			printf("Go into GUI_Manager.\n");
-            //GUI_Manager();
-            break;
-        case 1:
-			printf("Go into GUI_Customer.\n");
-            //GUI_Customer();
-            break;
-        default:
-            printf("Error in Login().\n");
-            printf("Login() returns %d\n",loginStatus);
-            return 0;
-    }*/
-	
+
+	// example of de. a variable of type char
+	// notice that: suggest to add "#" before variable name
+	char string[20];
+	InitializeChar("#string",string);
+	// test-------------------------------------------------------------
+	printf("The value of string is %s\n",string);
+
+
+	// example of change a value
+	// avoid to use this func. unless really in need 
+	ChangeConfigInt("#softwareStatus",0);
+	ChangeConfigChar("#string","helloWorld");
+
+	// example of call a function
+
+	if(FirstScreen()) ErrorInformation("FirstScreen");
+	// test
     return 0;
 }
