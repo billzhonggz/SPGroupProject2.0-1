@@ -40,6 +40,7 @@ int FirstScreen()
 }
 int Login()
 {
+	system("cls");
 	printf("  ************************************  \n");
 	printf("  *                                  *  \n");
 	printf("  *  WELCOME TO THE GIT DRINK STORE  *  \n");
@@ -63,41 +64,31 @@ int Login()
 	{
 		system("cls");
 		//printf("Debug mode: Go to Customer.\n");
-		GUI_Customer();
+		GUI_CustomerMain();
 		return 1;
 	}
 	if (loginChoice==2)
 	{
-		int pwdCheck;
+		int pwdCheck=0;
 		do
 		{
 			printf("Please input your password.\n");
 			char pwdInput[20];
-			gets(pwdInput);
+			scanf("%s",pwdInput);
 			pwdCheck=CheckPassword(pwdInput);
 		}
 		while (pwdCheck==1);
-		system("cls");
-		printf("Debug mode: Go to Manager\n");
-		//GUI_Manager();
+		//printf("Debug mode: Go to Manager\n");
+		GUI_ManagerMain();
 		return 0;
 	}
 	else 
 		return 3;
 }
 
-int CheckPassword(char *password)
+void GUI_CustomerMain()
 {
-	int cmpReturn;
-	char readPwd[20];
-	InitializeChar("#password",readPwd);
-	cmpReturn=strcmp(readPwd,password);
-	if (cmpReturn)
-		return 0;
-	return 1;
-}
-void GUI_Customer()
-{
+	system("cls");
 	printf("  ************************************  \n");
 	printf("  *                                  *  \n");
 	printf("  *  WELCOME TO THE GIT DRINK STORE  *  \n");
@@ -134,18 +125,18 @@ void GUI_Customer()
 	scanf("%d",&customerItemChoice);
 	if (customerItemChoice==0)
 		Login();
-	BuyNumberConfirm(customerItemChoice);
-	system("cls");
+	GUI_CustomerNumber(customerItemChoice);
 }
-void BuyNumberConfirm(int itemID)
+void GUI_CustomerNumber(int itemID)
 {
+	system("cls");
 	printf("  ************************************  \n");
 	printf("  *                                  *  \n");
 	printf("  *  WELCOME TO THE GIT DRINK STORE  *  \n");
 	printf("  *                                  *  \n");
 	printf("  ************************************  \n");
 	printf("\n");
-	printf("  ****CUSTOMER INTERFACE****  \n");
+	printf("      ****CUSTOMER INTERFACE****       \n");
 	printf("\n");
 	struct items *customerSearchResult;
 	customerSearchResult=SearchItem(itemID);
@@ -176,13 +167,59 @@ void BuyNumberConfirm(int itemID)
 	scanf("%d",&customerReturn);
 	switch (customerReturn)
 	{
-		case '1': GUI_Customer();
+		case 1: GUI_CustomerMain();
 			break;
-		case '2': Login();
+		case 2: Login();
 			break;
 		default : printf("Invalid input!\n");
 	}
 }
+
+void GUI_ManagerMain()
+{
+	system("cls");
+	printf("  ************************************  \n");
+	printf("  *                                  *  \n");
+	printf("  *  WELCOME TO THE GIT DRINK STORE  *  \n");
+	printf("  *                                  *  \n");
+	printf("  ************************************  \n");
+	printf("\n");
+	printf("        ****MANAGER INTERFACE****       \n");
+	printf("\n");
+	printf("Please select an administrative function.\n");
+	printf("\n");
+	printf("1. Change inventory\n2. Change unit price\n3. Add new item\n4. Change password\n5. Go back to main menu\n");
+	printf("\n");
+	printf("INPUT    ");
+	int managerMainInput;
+	scanf("%d",&managerMainInput);
+	switch (managerMainInput)
+	{
+		case 1: /*GUI_ManagerInventory()*/printf("Debug mode: Go to submenu inventory.\n");
+			break;
+		case 2: /*GUI_ManagerPrice()*/printf("Debug mode: Go to submenu price.\n");
+			break;
+		case 3: /*GUI_ManagerItem()*/printf("Debug mode: Go to submenu item.\n");
+			break;
+		case 4: /*GUI_ManagerPwd()*/printf("Debug mode: Go to submenu password.\n");
+			break;
+		case 5: Login();
+			break;
+		default: printf("Invalid input!\n");
+	}
+}
+
+int CheckPassword(char *password)
+{
+	int cmpReturn;
+	char readPwd[20];
+	InitializeChar("#password",readPwd);
+	cmpReturn=strcmp(readPwd,password);
+	if (cmpReturn)
+		return 1;
+	return 0;
+}
+
 struct items *SearchItem(int id)
 {
 	struct items *current;

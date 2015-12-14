@@ -79,9 +79,13 @@ int FirstScreen();
         // Other: error.
 
 int Login();//Choosing Customer or Manager GUI.
-void GUI_Customer();//Customer interface.
-void BuyNumberConfirm(int itemID);//To confirm item number buy by customer. --By Bill.
-void GUI_Manager();//Managing interface.
+void GUI_CustomerMain();//Customer interface.
+void GUI_CustomerNumber(int itemID);//To confirm item number buy by customer. --By Bill.
+void GUI_ManagerMain();//Managing interface.
+void GUI_ManagerInventory();//Manager submenu. Change inventory of each drink.
+void GUI_ManagerPrice();//Manager submenu. Change unit price of each drink.
+void GUI_ManagerItem();//Manager submenu. Change items.
+void GUI_ManagerPwd();//Manager submenu. Change password.
         //Customer and Manager GUI are used to:
         //1. Display the interface continously.
         //2. Read orders.
