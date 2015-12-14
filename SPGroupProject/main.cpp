@@ -35,5 +35,6 @@ int main(int argc, const char * argv[]) {
 
 	if(FirstScreen()) ErrorInformation("FirstScreen");
 	// test
+	Login();
     return 0;
 }

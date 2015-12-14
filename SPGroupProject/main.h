@@ -69,13 +69,14 @@ int FirstScreen();
 
 int Login();//Choosing Customer or Manager GUI.
 void GUI_Customer();//Customer interface.
+void BuyNumberConfirm(int itemID);//To confirm item number buy by customer. --By Bill.
 void GUI_Manager();//Managing interface.
         //Customer and Manager GUI are used to:
         //1. Display the interface continously.
         //2. Read orders.
         //3. Call relative functions to excute the function.
         //4. Display result of the excution to the screen by called fuctions' return values.
-int SearchItem(int id);
+struct items *SearchItem(int id);
 		//This function is used to search linkedlist "items" by id.
 		//Return NULL when failed. Return address of result when succeed. 
 		//Created by Bill. Incomplication is in GUI.cpp.
