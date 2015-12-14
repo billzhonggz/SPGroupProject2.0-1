@@ -1,0 +1,13 @@
+debug mode setting 
+open  : 1
+close : 0
+#debugMode 1
+0 : first open the software
+1 : not the first time open the software
+#softwareStatus 1
+administrator username
+#userName root
+password(SHA-256)
+#passworld 
+
+#string hello
