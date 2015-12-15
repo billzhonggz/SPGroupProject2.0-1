@@ -51,11 +51,7 @@ struct items *LoadItemList()
 	free(node1);
 	fclose(list);
 	
-	p =  head;
-	while(p){
-		printf("%s %d %.2f\n",p->name,p->amount,p->price);
-		p = p->next;
-	}
+
 	
 	
 	return head;
