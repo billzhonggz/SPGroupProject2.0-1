@@ -2,8 +2,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "main.h"
+<<<<<<< HEAD
+#include"main.h"
+=======
 
+
+>>>>>>> refs/remotes/JiayuYANG/master
 void FreeItems(struct items* head)
 {
 //Free every node in a linklist.

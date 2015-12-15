@@ -44,17 +44,19 @@ int FirstScreen()
 	char szDigest[16];
 	MD5Digest(pwd,strlen(pwd),szDigest);
 	printf("Storing your password...\n\n");
-	if (ChangeConfigChar("#password",szDigest) == 0)
-	{
-		printf("Password stored seccessfully.\n");
-		return 0;
-	}
-	else
+	//for (int i=0;i<16;i++) printf ("%02X",(unsigned char)szDigest[i]);
+	if (SavePassword("#password",szDigest))
 	{
 		printf("Password store failed.\n");
 		return 1; // error
 	}
+	else
+	{
+		printf("Password stored seccessfully.\n");
+		return 0;
+	}
 }
+
 int Login()
 {
 	system("cls");
@@ -147,6 +149,7 @@ void GUI_CustomerMain()
 		Login();
 	GUI_CustomerNumber(customerItemChoice);
 }
+
 void GUI_CustomerNumber(int itemID)
 {
 	system("cls");
@@ -525,7 +528,7 @@ void GUI_ManagerPwd()
 	char szDigest[16];
 	MD5Digest(newPwd,strlen(newPwd),szDigest);
 	int newPwdStore;
-	newPwdStore=ChangeConfigChar("#password", szDigest);
+	newPwdStore=SavePassword("#password", szDigest);
 	if (newPwdStore)
 		printf("Stored failed.\n\n");
 	else
@@ -554,9 +557,15 @@ int CheckPassword(char *password)
 	int cmpReturn;
 	char szDigest[16];
 	MD5Digest(password,strlen(password),szDigest);
-	char readPwd[16];
+	char readPwd[40];
 	InitializeChar("#password",readPwd);
-	cmpReturn=strcmp(readPwd,szDigest);
+	printf("%s\n",readPwd);
+	//---
+	SavePassword("#passwordcheck",szDigest);
+	char checkPwd[40];
+	InitializeChar("#passwordcheck",checkPwd);
+	printf("%s\n",checkPwd);
+	cmpReturn=strcmp(readPwd,checkPwd);
 	if (cmpReturn)
 		return 1;
 	return 0;
