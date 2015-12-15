@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include"main.h"
+#include "main.h"
 
 void FreeItems(struct items* head)
 {
@@ -50,9 +50,6 @@ struct items *LoadItemList()
 	p->next = NULL;
 	free(node1);
 	fclose(list);
-	
-
-	
 	
 	return head;
 }
