@@ -34,7 +34,9 @@ int ChangeConfigChar(char *variableName, char *p);
 		// use to change config value with type char
 		// Return 0 if successfully.
         // Return 1 if errors occured.
-
+int SavePassword(char *variableName, char *p);
+		// in order to save password 
+		// input value is %x
 int FirstSettingPage();
 		// used to get administrator username and passworld
 		// get initial setting

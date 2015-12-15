@@ -2,13 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-struct items{
-	char name[20];
-	int amount;
-	double price;
-	struct items* next;
-};
+#include"main.h"
 void FreeItems(struct items* head)
 {
 //Free every node in a linklist.
