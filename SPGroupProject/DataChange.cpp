@@ -2,13 +2,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+<<<<<<< HEAD
+#include"main.h"
+=======
 
-struct items{
-	char name[20];
-	int amount;
-	double price;
-	struct items* next;
-};
+
+>>>>>>> refs/remotes/JiayuYANG/master
 void FreeItems(struct items* head)
 {
 //Free every node in a linklist.
@@ -55,6 +54,9 @@ struct items *LoadItemList()
 	p->next = NULL;
 	free(node1);
 	fclose(list);
+	
+
+	
 	
 	return head;
 }
