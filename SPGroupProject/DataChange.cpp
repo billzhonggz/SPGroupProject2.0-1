@@ -2,7 +2,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+<<<<<<< HEAD
 #include"main.h"
+=======
+
+
+>>>>>>> refs/remotes/JiayuYANG/master
 void FreeItems(struct items* head)
 {
 //Free every node in a linklist.
@@ -49,6 +54,9 @@ struct items *LoadItemList()
 	p->next = NULL;
 	free(node1);
 	fclose(list);
+	
+
+	
 	
 	return head;
 }
