@@ -20,10 +20,10 @@ int main(int argc, const char * argv[]) {
 
 	// example of de. a variable of type char
 	// notice that: suggest to add "#" before variable name
-	char string[20];
-	InitializeChar("#string",string);
+	// char string[20];
+	// InitializeChar("#string",string);
 	// test-------------------------------------------------------------
-	printf("The value of string is %s\n",string);
+	// printf("The value of string is %s\n",string);
 
 
 	// example of change a value
@@ -35,5 +35,6 @@ int main(int argc, const char * argv[]) {
 
 	if(FirstScreen()) ErrorInformation("FirstScreen");
 	// test
+	Login();
     return 0;
 }

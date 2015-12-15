@@ -7,6 +7,6 @@
 #softwareStatus 0
 ;administrator username
 #userNameroot
-;password(SHA-256)
-#password helloworld
-#string helloWorld
+;password(MD5)
+#password 96E79218965EB72C92A549DD5A330112
+#passwordcheck 96E79218965EB72C92A549DD5A330112

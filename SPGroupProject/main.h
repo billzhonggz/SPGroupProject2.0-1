@@ -34,7 +34,9 @@ int ChangeConfigChar(char *variableName, char *p);
 		// use to change config value with type char
 		// Return 0 if successfully.
         // Return 1 if errors occured.
-
+int SavePassword(char *variableName, char *p);
+		// in order to save password 
+		// input value is %x
 int FirstSettingPage();
 		// used to get administrator username and passworld
 		// get initial setting
@@ -79,14 +81,19 @@ int FirstScreen();
         // Other: error.
 
 int Login();//Choosing Customer or Manager GUI.
-void GUI_Customer();//Customer interface.
-void GUI_Manager();//Managing interface.
+void GUI_CustomerMain();//Customer interface.
+void GUI_CustomerNumber(int itemID);//To confirm item number buy by customer. --By Bill.
+void GUI_ManagerMain();//Managing interface.
+void GUI_ManagerInventory();//Manager submenu. Change inventory of each drink.
+void GUI_ManagerPrice();//Manager submenu. Change unit price of each drink.
+void GUI_ManagerItem();//Manager submenu. Change items.
+void GUI_ManagerPwd();//Manager submenu. Change password.
         //Customer and Manager GUI are used to:
         //1. Display the interface continously.
         //2. Read orders.
         //3. Call relative functions to excute the function.
         //4. Display result of the excution to the screen by called fuctions' return values.
-int SearchItem(int id);
+struct items *SearchItem(int id);
 		//This function is used to search linkedlist "items" by id.
 		//Return NULL when failed. Return address of result when succeed. 
 		//Created by Bill. Incomplication is in GUI.cpp.
