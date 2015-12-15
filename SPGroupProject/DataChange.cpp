@@ -2,13 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "main.h"
 
-struct items{
-	char name[20];
-	int amount;
-	double price;
-	struct items* next;
-};
 void FreeItems(struct items* head)
 {
 //Free every node in a linklist.
@@ -55,6 +50,13 @@ struct items *LoadItemList()
 	p->next = NULL;
 	free(node1);
 	fclose(list);
+	
+	p =  head;
+	while(p){
+		printf("%s %d %.2f\n",p->name,p->amount,p->price);
+		p = p->next;
+	}
+	
 	
 	return head;
 }
