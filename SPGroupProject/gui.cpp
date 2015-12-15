@@ -79,7 +79,7 @@ int FirstScreen()
 	}
 }
 
-int Login()
+int Login(struct items *head)
 {
 	//system("cls");
 	printf("  ************************************  \n");
@@ -105,7 +105,7 @@ int Login()
 	{
 		system("cls");
 		//printf("Debug mode: Go to Customer.\n");
-		GUI_CustomerMain();
+		GUI_CustomerMain(head);
 		return 1;
 	}
 	if (loginChoice==2)
@@ -123,14 +123,14 @@ int Login()
 		}
 		while (pwdCheck==1);
 		//printf("Debug mode: Go to Manager\n");
-		GUI_ManagerMain();
+		GUI_ManagerMain(head);
 		return 0;
 	}
 	else 
 		return 3;
 }
 
-void GUI_CustomerMain()
+void GUI_CustomerMain(struct items* head)
 {
 	system("cls");
 	printf("  ************************************  \n");
@@ -143,23 +143,20 @@ void GUI_CustomerMain()
 	printf("\n");
 	printf("Now loading drink item list...\n");
 	printf("\n");
-	//Load item list.
-	struct items *customerItem;
-	customerItem=LoadItemList();
 	//Get first address.
-	if (customerItem==NULL)
+	if (head==NULL)
 		printf("Load item list failed. Please try again.\n");
 	printf("We offer these drinks! :)\n");
 	printf("ID  Item         Amount    Price  \n");
 	printf("0   Exit\n");
 	int id=1;
-	while (customerItem)
+	while (head)
 	{
-		printf("%d  %s      %d    %.2f   \n",id,customerItem->name,customerItem->amount,customerItem->price);
-		customerItem=customerItem->next;
+		printf("%d  %s      %d    %.2f   \n",id,head->name,head->amount,head->price);
+		head=head->next;
 		id++;
 	}
-	free(customerItem);
+	FreeItems(head);
 	//Get user input.
 	printf("\n");
 	printf("Please input your choice by typing the item number. Type 0 to go back.\n");
@@ -168,11 +165,11 @@ void GUI_CustomerMain()
 	int customerItemChoice;
 	scanf("%d",&customerItemChoice);
 	if (customerItemChoice==0)
-		Login();
-	GUI_CustomerNumber(customerItemChoice);
+		Login(head);
+	GUI_CustomerNumber(head,customerItemChoice);
 }
 
-void GUI_CustomerNumber(int itemID)
+void GUI_CustomerNumber(struct items* head, int itemID)
 {
 	system("cls");
 	printf("  ************************************  \n");
@@ -184,7 +181,7 @@ void GUI_CustomerNumber(int itemID)
 	printf("      ****CUSTOMER INTERFACE****       \n");
 	printf("\n");
 	struct items *customerSearchResult;
-	customerSearchResult=SearchItem(itemID);
+	customerSearchResult=SearchItem(head,itemID);
 	if (customerSearchResult==NULL)
 		printf("Invalid input!\n");
 	printf("Your choice is %s. Avibile amount is %d. Unit price is %.2f.\n",customerSearchResult->name,customerSearchResult->amount,customerSearchResult->price);
@@ -206,8 +203,8 @@ void GUI_CustomerNumber(int itemID)
 	if (paid < totalPrice)
 		printf("Please pay enough money!\n");
 	printf("Change is %2f, thank you!\n",paid-totalPrice);
-	free(customerSearchResult);
-	free(calcPrice);
+	FreeItems(customerSearchResult);
+	FreeItems(calcPrice);
 	//Go back choose.
 	printf("What do you want to do next?\n");
 	printf("\n");
@@ -216,15 +213,15 @@ void GUI_CustomerNumber(int itemID)
 	scanf("%d",&customerReturn);
 	switch (customerReturn)
 	{
-		case 1: GUI_CustomerMain();
+		case 1: GUI_CustomerMain(head);
 			break;
-		case 2: Login();
+		case 2: Login(head);
 			break;
 		default : printf("Invalid input!\n");
 	}
 }
 
-void GUI_ManagerMain()
+void GUI_ManagerMain(struct items* head)
 {
 	system("cls");
 	printf("  ************************************  \n");
@@ -244,21 +241,21 @@ void GUI_ManagerMain()
 	scanf("%d",&managerMainInput);
 	switch (managerMainInput)
 	{
-		case 1: GUI_ManagerInventory()/*printf("Debug mode: Go to submenu inventory.\n")*/;
+		case 1: GUI_ManagerInventory(head)/*printf("Debug mode: Go to submenu inventory.\n")*/;
 			break;
-		case 2: GUI_ManagerPrice()/*printf("Debug mode: Go to submenu price.\n")*/;
+		case 2: /*GUI_ManagerPrice(head)*/printf("Debug mode: Go to submenu price.\n");
 			break;
-		case 3: GUI_ManagerItem()/*printf("Debug mode: Go to submenu item.\n")*/;
+		case 3: /*GUI_ManagerItem(head)*/printf("Debug mode: Go to submenu item.\n");
 			break;
-		case 4: GUI_ManagerPwd()/*printf("Debug mode: Go to submenu password.\n")*/;
+		case 4: /*GUI_ManagerPwd(head)*/printf("Debug mode: Go to submenu password.\n");
 			break;
-		case 5: Login();
+		case 5: Login(head);
 			break;
 		default: printf("Invalid input!\n");
 	}
 }
 
-void GUI_ManagerInventory()
+void GUI_ManagerInventory(struct items* head)
 {
 	system("cls");
 	printf("  ************************************  \n");
@@ -292,9 +289,9 @@ void GUI_ManagerInventory()
 	scanf("%d", &changeID);
 	//Search and print out requesting item.
 	if (changeID == 0)
-		GUI_ManagerMain();
+		GUI_ManagerMain(head);
 	struct items *beforeChangeItem;
-	beforeChangeItem=SearchItem(changeID);
+	beforeChangeItem=SearchItem(head,changeID);
 	printf("Item you want to change is %s, current inventory is %d.\n", beforeChangeItem->name, beforeChangeItem->amount);
 	printf("\n");
 	//Change inventory by increase/decrease.
@@ -311,7 +308,7 @@ void GUI_ManagerInventory()
 		printf("Change inventory succeed.\n");
 	//Print out changed item to show result.
 	struct items *afterChangeItem;
-	afterChangeItem = SearchItem(changeID);
+	afterChangeItem = SearchItem(head,changeID);
 	printf("Inventory of item %s has changed to %d.\n", afterChangeItem->name, afterChangeItem->amount);
 	printf("\n");
 	printf("What do you want to do next?\n");
@@ -324,18 +321,18 @@ void GUI_ManagerInventory()
 	scanf("%d", &inventoryBack);
 	switch (inventoryBack)
 	{
-		case 1: GUI_ManagerInventory();
+		case 1: GUI_ManagerInventory(head);
 			break;
-		case 2: GUI_CustomerMain();
+		case 2: GUI_CustomerMain(head);
 			break;
-		case 3: Login();
+		case 3: Login(head);
 			break;
 		default: printf("Invalid input!\n");
 			break;
 	}
 }
-
-void GUI_ManagerPrice()
+/*
+void GUI_ManagerPrice(struct items* head)
 {
 	system("cls");
 	printf("  ************************************  \n");
@@ -410,7 +407,7 @@ void GUI_ManagerPrice()
 	}
 }
 
-void GUI_ManagerItem()
+void GUI_ManagerItem(struct items* head)
 {
 	system("cls");
 	printf("  ************************************  \n");
@@ -581,7 +578,7 @@ void GUI_ManagerPwd()
 		break;
 	}
 }
-
+*/
 int CheckPassword(char *password)
 {
 	int cmpReturn;
@@ -601,10 +598,11 @@ int CheckPassword(char *password)
 	return 0;
 }
 
-struct items *SearchItem(int id)
+
+struct items *SearchItem(struct items *head, int id)
 {
 	struct items *current;
-	current=LoadItemList();
+	current = head;
 	int i;
 	for (i=0;i<id-1;i++)
 	{
@@ -612,5 +610,6 @@ struct items *SearchItem(int id)
 			return 0;
 		current=current->next;
 	}
+	FreeItems(current);
 	return current;
 }
