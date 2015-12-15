@@ -1,13 +1,17 @@
 //gui.cpp by Bill.
 //Last modification on Dec. 15th, 2015
+//MD5 algrithm from http://blog.csdn.net/qinggebuyao/article/details/7995398
 //Functions waiting for implementation are listed below...
-//	Password length limitation.
-//	Password input failure information.
-//	Password SHA-256 encryption.
+//	Password length limitation.(Finished)
+//	Password input failure information.(Finished)
+//	Password encryption.(Unfinished)
+
 #define _CRT_SECURE_NO_WARNINGS
 #include<stdlib.h>
 #include<string.h>
+#include<conio.h>
 #include"main.h"
+#include"md5.h"
 
 int FirstScreen()
 {
@@ -23,19 +27,26 @@ int FirstScreen()
 	printf("\n");
 	char pwd[20];
 	char pwdVerify[20];
-	do
+	for( ; ; )
 	{
 		printf("Please input your manage password which is between 6 to 20 characters.\n");
-		gets_s(pwd);
+		scanf("%s",pwd);
 		printf("Please input your password again.\n");
-		gets_s(pwdVerify);
+		scanf("%s",pwdVerify);
+		if (strlen(pwd)<6 || strlen(pwd)>20)
+			printf("Input a password between 6 to 20 characters!\n\n");
+		else if (strcmp(pwd,pwdVerify)!=0)
+			printf("Inputs are not same!\n\n");
+		else
+			break;
 	}
-	while (strcmp(pwdVerify,pwd));
-	printf("Storing your password...\n");
-	if (ChangeConfigChar("#password",pwd) == 0)
+	printf("Encrypting your password...\n\n");
+	char szDigest[16];
+	MD5Digest(pwd,strlen(pwd),szDigest);
+	printf("Storing your password...\n\n");
+	if (ChangeConfigChar("#password",szDigest) == 0)
 	{
 		printf("Password stored seccessfully.\n");
-		//system("cls");
 		return 0;
 	}
 	else
@@ -76,12 +87,15 @@ int Login()
 	if (loginChoice==2)
 	{
 		int pwdCheck=0;
-		do
+		for ( ; ; )
 		{
 			printf("Please input your password.\n");
 			char pwdInput[20];
 			scanf("%s",pwdInput);
-			pwdCheck=CheckPassword(pwdInput);
+			if (pwdCheck!=CheckPassword(pwdInput))
+				printf("Password is incorrect!\n\n");
+			else 
+				break;
 		}
 		while (pwdCheck==1);
 		//printf("Debug mode: Go to Manager\n");
@@ -194,7 +208,7 @@ void GUI_ManagerMain()
 	printf("\n");
 	printf("Please select an administrative function.\n");
 	printf("\n");
-	printf("1. Change inventory\n2. Change unit price\n3. Add & delete items\n4. Change password\n5. Go back to main menu\n");
+	printf("1. Change inventory\n\n2. Change unit price\n\n3. Add & delete items\n\n4. Change password\n\n5. Go back to main menu\n");
 	printf("\n");
 	printf("INPUT    ");
 	int managerMainInput;
@@ -478,28 +492,48 @@ void GUI_ManagerPwd()
 	printf("\n");
 	printf("Change your password.\n");
 	printf("\n");
-	printf("Input current password.\n");
 	char currentPwd[20];
-	scanf("%s", currentPwd);
-	printf("Verify your password\n");
-	if (CheckPassword(currentPwd))
-		printf("Password is wrong.\n");
-	printf("Input your new password.\n");
-	char newPwd[20];
-	scanf("%s", newPwd);
-	printf("Input new password again.\n");
-	char newPwdVerify[20];
-	scanf("%s", newPwdVerify);
-	if (strcmp(newPwdVerify, newPwd))
+	for ( ; ; )
 	{
-		printf("Storing your new password.\n");
-		ChangeConfigChar("#password", newPwd);//Store failed.
+		printf("Input current password.\n");
+		scanf("%s", currentPwd);
+		printf("\nVerifying your password...\n");
+		if (CheckPassword(currentPwd))
+			printf("Password is incorrect!\n\n");
+		else 
+		{
+			printf("Your input is correct. Now change your password.\n\n");
+			break;
+		}
 	}
-	printf("Two entries are differnent, please input again.\n");
+	char newPwd[20];
+	char newPwdVerify[20];
+	for ( ; ; )
+	{
+		printf("Input your new password.\n");
+		scanf("%s", newPwd);
+		printf("Input new password again.\n");
+		scanf("%s", newPwdVerify);
+		if (strlen(newPwd)<6 || strlen(newPwd)>20)
+			printf("Input a password between 6 to 20 characters!\n\n");
+		else if (strcmp(newPwd,newPwdVerify)!=0)
+			printf("Inputs are not same!\n\n");
+		else
+			break;
+	}
+	printf("Storing your new password...\n\n");
+	char szDigest[16];
+	MD5Digest(newPwd,strlen(newPwd),szDigest);
+	int newPwdStore;
+	newPwdStore=ChangeConfigChar("#password", szDigest);
+	if (newPwdStore)
+		printf("Stored failed.\n\n");
+	else
+		printf("Stored successfully!\n\n");
 	//Exit this function.
 	printf("What do you want to do next?\n");
 	printf("\n");
-	printf("1. Go back to manager menu\n3. Go back to main menu\n");
+	printf("1. Go back to manager menu\n2. Go back to main menu\n");
 	printf("\n");
 	printf("INPUT  ");
 	int pwdBack;
@@ -518,9 +552,11 @@ void GUI_ManagerPwd()
 int CheckPassword(char *password)
 {
 	int cmpReturn;
-	char readPwd[20];
+	char szDigest[16];
+	MD5Digest(password,strlen(password),szDigest);
+	char readPwd[16];
 	InitializeChar("#password",readPwd);
-	cmpReturn=strcmp(readPwd,password);
+	cmpReturn=strcmp(readPwd,szDigest);
 	if (cmpReturn)
 		return 1;
 	return 0;
