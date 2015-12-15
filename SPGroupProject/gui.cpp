@@ -4,7 +4,8 @@
 //Functions waiting for implementation are listed below...
 //	Password length limitation.(Finished)
 //	Password input failure information.(Finished)
-//	Password encryption.(Unfinished)
+//	Password encryption.(Finished)
+//  Password hide.
 
 #define _CRT_SECURE_NO_WARNINGS
 #include<stdlib.h>
@@ -27,20 +28,41 @@ int FirstScreen()
 	printf("\n");
 	char pwd[20];
 	char pwdVerify[20];
+	int i;
 	for( ; ; )
 	{
-		printf("Please input your manage password which is between 6 to 20 characters.\n");
-		scanf("%s",pwd);
-		printf("Please input your password again.\n");
-		scanf("%s",pwdVerify);
-		if (strlen(pwd)<6 || strlen(pwd)>20)
-			printf("Input a password between 6 to 20 characters!\n\n");
-		else if (strcmp(pwd,pwdVerify)!=0)
+		for (;;)
+		{
+			printf("Please input your manage password which is between 6 to 16 characters.\n");
+			for (i = 0; i < 20 ; i++)
+			{
+				pwd[i] = _getch();
+				if (pwd[i] == '\r')
+					break;
+				printf("*");
+			}
+			pwd[i] = '\0';
+			//scanf("%s", pwd);
+			if (strlen(pwd)<6 || strlen(pwd)>16)
+				printf("Input a password between 6 to 16 characters!\n\n");
+			else break;
+		}
+		printf("\nPlease input your password again.\n");
+		for (i = 0; i < 20 ; i++)
+		{
+			pwdVerify[i] = _getch();
+			if (pwdVerify[i] == '\r')
+				break;
+			printf("*");
+		}
+		pwdVerify[i] = '\0';
+		//scanf("%s", pwdVerify);
+		if (strcmp(pwd, pwdVerify) != 0)
 			printf("Inputs are not same!\n\n");
 		else
 			break;
 	}
-	printf("Encrypting your password...\n\n");
+	printf("\nEncrypting your password...\n\n");
 	char szDigest[16];
 	MD5Digest(pwd,strlen(pwd),szDigest);
 	printf("Storing your password...\n\n");
@@ -59,7 +81,7 @@ int FirstScreen()
 
 int Login()
 {
-	system("cls");
+	//system("cls");
 	printf("  ************************************  \n");
 	printf("  *                                  *  \n");
 	printf("  *  WELCOME TO THE GIT DRINK STORE  *  \n");
@@ -131,13 +153,13 @@ void GUI_CustomerMain()
 	printf("ID  Item         Amount    Price  \n");
 	printf("0   Exit\n");
 	int id=1;
-	do
+	while (customerItem)
 	{
-		printf("%d  %s           %d        %2f   \n",id,customerItem->name,customerItem->amount,customerItem->price);
+		printf("%d  %s      %d    %.2f   \n",id,customerItem->name,customerItem->amount,customerItem->price);
 		customerItem=customerItem->next;
 		id++;
 	}
-	while (customerItem==NULL);
+	free(customerItem);
 	//Get user input.
 	printf("\n");
 	printf("Please input your choice by typing the item number. Type 0 to go back.\n");
@@ -165,7 +187,7 @@ void GUI_CustomerNumber(int itemID)
 	customerSearchResult=SearchItem(itemID);
 	if (customerSearchResult==NULL)
 		printf("Invalid input!\n");
-	printf("Your choice is %s. Avibile amount is %d. Unit price is %2f.\n",customerSearchResult->name,customerSearchResult->amount,customerSearchResult->price);
+	printf("Your choice is %s. Avibile amount is %d. Unit price is %.2f.\n",customerSearchResult->name,customerSearchResult->amount,customerSearchResult->price);
 	printf("\n");
 	printf("How many %s you want to buy?\n",customerSearchResult->name);
 	int customerBuyNumber;
@@ -173,7 +195,9 @@ void GUI_CustomerNumber(int itemID)
 	scanf("%d",&customerBuyNumber);
 	printf("\n");
 	double totalPrice;
-	totalPrice=customerBuyNumber*customerSearchResult->price;
+	struct items *calcPrice;
+	calcPrice = LoadItemList();
+	totalPrice=CalculatePrice(calcPrice,customerBuyNumber,itemID);
 	printf("You will buy %d %s. You should pay %2f in total.\n",customerSearchResult->price,customerSearchResult->name,totalPrice);
 	printf("\n");
 	double paid;
@@ -182,6 +206,8 @@ void GUI_CustomerNumber(int itemID)
 	if (paid < totalPrice)
 		printf("Please pay enough money!\n");
 	printf("Change is %2f, thank you!\n",paid-totalPrice);
+	free(customerSearchResult);
+	free(calcPrice);
 	//Go back choose.
 	printf("What do you want to do next?\n");
 	printf("\n");
@@ -513,13 +539,17 @@ void GUI_ManagerPwd()
 	char newPwdVerify[20];
 	for ( ; ; )
 	{
-		printf("Input your new password.\n");
-		scanf("%s", newPwd);
+		for (;;)
+		{
+			printf("Input your new password.\n");
+			scanf("%s", newPwd);
+			if (strlen(newPwd)<6 || strlen(newPwd)>20)
+				printf("Input a password between 6 to 20 characters!\n\n");
+			else break;
+		}
 		printf("Input new password again.\n");
 		scanf("%s", newPwdVerify);
-		if (strlen(newPwd)<6 || strlen(newPwd)>20)
-			printf("Input a password between 6 to 20 characters!\n\n");
-		else if (strcmp(newPwd,newPwdVerify)!=0)
+		if (strcmp(newPwd,newPwdVerify)!=0)
 			printf("Inputs are not same!\n\n");
 		else
 			break;
@@ -559,12 +589,12 @@ int CheckPassword(char *password)
 	MD5Digest(password,strlen(password),szDigest);
 	char readPwd[40];
 	InitializeChar("#password",readPwd);
-	printf("%s\n",readPwd);
+	//printf("%s\n",readPwd);
 	//---
 	SavePassword("#passwordcheck",szDigest);
 	char checkPwd[40];
 	InitializeChar("#passwordcheck",checkPwd);
-	printf("%s\n",checkPwd);
+	//printf("%s\n",checkPwd);
 	cmpReturn=strcmp(readPwd,checkPwd);
 	if (cmpReturn)
 		return 1;
@@ -574,11 +604,12 @@ int CheckPassword(char *password)
 struct items *SearchItem(int id)
 {
 	struct items *current;
-	struct items *head;
-	head=LoadItemList();
-	current=head;
-	for (int i=0;i<=id && current==NULL;i++)
+	current=LoadItemList();
+	int i;
+	for (i=0;i<id-1;i++)
 	{
+		if (current == NULL)
+			return 0;
 		current=current->next;
 	}
 	return current;
