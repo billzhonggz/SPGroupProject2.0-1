@@ -6,7 +6,6 @@
 ;0:not the first time open the software
 #softwareStatus 0
 ;administrator username
-#userNameroot
 ;password(MD5)
 #password 96E79218965EB72C92A549DD5A330112
 #passwordcheck 96E79218965EB72C92A549DD5A330112
