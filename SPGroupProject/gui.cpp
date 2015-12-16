@@ -79,9 +79,9 @@ int FirstScreen()
 	}
 }
 
-int Login()
+int Login(struct items *head)
 {
-	//system("cls");
+	system("cls");
 	printf("  ************************************  \n");
 	printf("  *                                  *  \n");
 	printf("  *  WELCOME TO THE GIT DRINK STORE  *  \n");
@@ -105,17 +105,25 @@ int Login()
 	{
 		system("cls");
 		//printf("Debug mode: Go to Customer.\n");
-		GUI_CustomerMain();
+		GUI_CustomerMain(head);
 		return 1;
 	}
 	if (loginChoice==2)
 	{
 		int pwdCheck=0;
+		int i;
+		char pwdInput[20];
 		for ( ; ; )
 		{
 			printf("Please input your password.\n");
-			char pwdInput[20];
-			scanf("%s",pwdInput);
+			for (i = 0; i < 20; i++)
+			{
+				pwdInput[i] = _getch();
+				if (pwdInput[i] == '\r')
+					break;
+				printf("*");
+			}
+			pwdInput[i] = '\0';
 			if (pwdCheck!=CheckPassword(pwdInput))
 				printf("Password is incorrect!\n\n");
 			else 
@@ -123,14 +131,14 @@ int Login()
 		}
 		while (pwdCheck==1);
 		//printf("Debug mode: Go to Manager\n");
-		GUI_ManagerMain();
+		GUI_ManagerMain(head);
 		return 0;
 	}
 	else 
 		return 3;
 }
 
-void GUI_CustomerMain()
+void GUI_CustomerMain(struct items* head)
 {
 	system("cls");
 	printf("  ************************************  \n");
@@ -143,23 +151,20 @@ void GUI_CustomerMain()
 	printf("\n");
 	printf("Now loading drink item list...\n");
 	printf("\n");
-	//Load item list.
-	struct items *customerItem;
-	customerItem=LoadItemList();
 	//Get first address.
-	if (customerItem==NULL)
+	if (head==NULL)
 		printf("Load item list failed. Please try again.\n");
 	printf("We offer these drinks! :)\n");
 	printf("ID  Item         Amount    Price  \n");
 	printf("0   Exit\n");
 	int id=1;
-	while (customerItem)
+	while (head)
 	{
-		printf("%d  %s      %d    %.2f   \n",id,customerItem->name,customerItem->amount,customerItem->price);
-		customerItem=customerItem->next;
+		printf("%d  %s      %d    %.2f   \n",id,head->name,head->amount,head->price);
+		head=head->next;
 		id++;
 	}
-	free(customerItem);
+	//FreeItems(head);
 	//Get user input.
 	printf("\n");
 	printf("Please input your choice by typing the item number. Type 0 to go back.\n");
@@ -168,11 +173,11 @@ void GUI_CustomerMain()
 	int customerItemChoice;
 	scanf("%d",&customerItemChoice);
 	if (customerItemChoice==0)
-		Login();
-	GUI_CustomerNumber(customerItemChoice);
+		Login(head);
+	GUI_CustomerNumber(head,customerItemChoice);
 }
 
-void GUI_CustomerNumber(int itemID)
+void GUI_CustomerNumber(struct items* head, int itemID)
 {
 	system("cls");
 	printf("  ************************************  \n");
@@ -184,7 +189,7 @@ void GUI_CustomerNumber(int itemID)
 	printf("      ****CUSTOMER INTERFACE****       \n");
 	printf("\n");
 	struct items *customerSearchResult;
-	customerSearchResult=SearchItem(itemID);
+	customerSearchResult=SearchItem(head,itemID);
 	if (customerSearchResult==NULL)
 		printf("Invalid input!\n");
 	printf("Your choice is %s. Avibile amount is %d. Unit price is %.2f.\n",customerSearchResult->name,customerSearchResult->amount,customerSearchResult->price);
@@ -206,8 +211,8 @@ void GUI_CustomerNumber(int itemID)
 	if (paid < totalPrice)
 		printf("Please pay enough money!\n");
 	printf("Change is %2f, thank you!\n",paid-totalPrice);
-	free(customerSearchResult);
-	free(calcPrice);
+	FreeItems(customerSearchResult);
+	FreeItems(calcPrice);
 	//Go back choose.
 	printf("What do you want to do next?\n");
 	printf("\n");
@@ -216,15 +221,15 @@ void GUI_CustomerNumber(int itemID)
 	scanf("%d",&customerReturn);
 	switch (customerReturn)
 	{
-		case 1: GUI_CustomerMain();
+		case 1: GUI_CustomerMain(head);
 			break;
-		case 2: Login();
+		case 2: Login(head);
 			break;
 		default : printf("Invalid input!\n");
 	}
 }
 
-void GUI_ManagerMain()
+void GUI_ManagerMain(struct items* head)
 {
 	system("cls");
 	printf("  ************************************  \n");
@@ -244,21 +249,21 @@ void GUI_ManagerMain()
 	scanf("%d",&managerMainInput);
 	switch (managerMainInput)
 	{
-		case 1: GUI_ManagerInventory()/*printf("Debug mode: Go to submenu inventory.\n")*/;
+		case 1: GUI_ManagerInventory(head)/*printf("Debug mode: Go to submenu inventory.\n")*/;
 			break;
-		case 2: GUI_ManagerPrice()/*printf("Debug mode: Go to submenu price.\n")*/;
+		case 2: GUI_ManagerPrice(head)/*printf("Debug mode: Go to submenu price.\n")*/;
 			break;
-		case 3: GUI_ManagerItem()/*printf("Debug mode: Go to submenu item.\n")*/;
+		case 3: GUI_ManagerItem(head)/*printf("Debug mode: Go to submenu item.\n")*/;
 			break;
-		case 4: GUI_ManagerPwd()/*printf("Debug mode: Go to submenu password.\n")*/;
+		case 4: GUI_ManagerPwd(head)/*printf("Debug mode: Go to submenu password.\n")*/;
 			break;
-		case 5: Login();
+		case 5: Login(head);
 			break;
 		default: printf("Invalid input!\n");
 	}
 }
 
-void GUI_ManagerInventory()
+void GUI_ManagerInventory(struct items* head)
 {
 	system("cls");
 	printf("  ************************************  \n");
@@ -276,13 +281,13 @@ void GUI_ManagerInventory()
 	changeInventory = LoadItemList();
 	int id = 1;
 	printf("ID  Item         Amount    Price  \n");
-	printf("0   Go back\n");
-	do
+	printf("0   Exit\n");
+	while (head)
 	{
-		printf("%d   %s            %d       %2f   \n", id, changeInventory->name, changeInventory->amount, changeInventory->price);
-		changeInventory = changeInventory->next;
+		printf("%d  %s      %d    %.2f   \n", id, head->name, head->amount, head->price);
+		head = head->next;
 		id++;
-	} while (changeInventory == NULL);
+	}
 	printf("\n");
 	//Get user input ID.
 	printf("Type ID number to select...\n");
@@ -292,9 +297,9 @@ void GUI_ManagerInventory()
 	scanf("%d", &changeID);
 	//Search and print out requesting item.
 	if (changeID == 0)
-		GUI_ManagerMain();
+		GUI_ManagerMain(head);
 	struct items *beforeChangeItem;
-	beforeChangeItem=SearchItem(changeID);
+	beforeChangeItem=SearchItem(head,changeID);
 	printf("Item you want to change is %s, current inventory is %d.\n", beforeChangeItem->name, beforeChangeItem->amount);
 	printf("\n");
 	//Change inventory by increase/decrease.
@@ -311,7 +316,7 @@ void GUI_ManagerInventory()
 		printf("Change inventory succeed.\n");
 	//Print out changed item to show result.
 	struct items *afterChangeItem;
-	afterChangeItem = SearchItem(changeID);
+	afterChangeItem = SearchItem(head,changeID);
 	printf("Inventory of item %s has changed to %d.\n", afterChangeItem->name, afterChangeItem->amount);
 	printf("\n");
 	printf("What do you want to do next?\n");
@@ -324,18 +329,18 @@ void GUI_ManagerInventory()
 	scanf("%d", &inventoryBack);
 	switch (inventoryBack)
 	{
-		case 1: GUI_ManagerInventory();
+		case 1: GUI_ManagerInventory(head);
 			break;
-		case 2: GUI_CustomerMain();
+		case 2: GUI_CustomerMain(head);
 			break;
-		case 3: Login();
+		case 3: Login(head);
 			break;
 		default: printf("Invalid input!\n");
 			break;
 	}
 }
 
-void GUI_ManagerPrice()
+void GUI_ManagerPrice(struct items* head)
 {
 	system("cls");
 	printf("  ************************************  \n");
@@ -348,18 +353,15 @@ void GUI_ManagerPrice()
 	printf("\n");
 	printf("        ****UNIT PRICE CHANGE****       \n");
 	printf("\n");
-	//Print out current item list.
-	struct items *changePrice;
-	changePrice = LoadItemList();
 	int id = 1;
 	printf("ID  Item         Amount    Price  \n");
-	printf("0   Go back\n");
-	do
+	printf("0   Exit\n");
+	while (head)
 	{
-		printf("%d   %s            %d       %2f   \n", id, changePrice->name, changePrice->amount, changePrice->price);
-		changePrice = changePrice->next;
+		printf("%d  %s      %d    %.2f   \n", id, head->name, head->amount, head->price);
+		head = head->next;
 		id++;
-	} while (changePrice == NULL);
+	}
 	printf("\n");
 	//Get user input ID.
 	printf("Type ID number to select...\n");
@@ -368,10 +370,10 @@ void GUI_ManagerPrice()
 	int changeID;
 	scanf("%d", &changeID);
 	if (changeID == 0)
-		GUI_ManagerMain();
+		GUI_ManagerMain(head);
 	//Search and print out requesting item.
 	struct items *beforeChangeItem;
-	beforeChangeItem = SearchItem(changeID);
+	beforeChangeItem = SearchItem(head,changeID);
 	printf("Item you want to change is %s, current price is %d.\n", beforeChangeItem->name, beforeChangeItem->price);
 	printf("\n");
 	//Change price.
@@ -384,33 +386,35 @@ void GUI_ManagerPrice()
 		printf("Change price failed: ID matching failed.\n");
 	if (changeReturn == 0)
 		printf("Change price succeed.\n");
+	FreeItems(beforeChangeItem);
 	//Print out changed item to show result.
 	struct items *afterChangeItem;
-	afterChangeItem = SearchItem(changeID);
+	afterChangeItem = SearchItem(head,changeID);
 	printf("Inventory of item %s has changed to %d.\n", afterChangeItem->name, afterChangeItem->price);
 	printf("\n");
+	FreeItems(afterChangeItem);
 	//Exit this function.
 	printf("What do you want to do next?\n");
 	printf("\n");
 	printf("1. Change other item(s)' price\n2. Go back to manager menu\n3. Go back to main menu\n");
 	printf("\n");
 	printf("INPUT  ");
-	int priceBack;
+	int priceBack; 
 	scanf("%d", &priceBack);
 	switch (priceBack)
 	{
-	case 1: GUI_ManagerPrice();
+	case 1: GUI_ManagerPrice(head);
 		break;
-	case 2: GUI_CustomerMain();
+	case 2: GUI_CustomerMain(head);
 		break;
-	case 3: Login();
+	case 3: Login(head);
 		break;
 	default: printf("Invalid input!\n");
 		break;
 	}
 }
 
-void GUI_ManagerItem()
+void GUI_ManagerItem(struct items* head)
 {
 	system("cls");
 	printf("  ************************************  \n");
@@ -429,12 +433,13 @@ void GUI_ManagerItem()
 	int itemManegeChoose;
 	scanf("%d", &itemManegeChoose);
 	if (itemManegeChoose == 0)
-		GUI_ManagerMain();
+		GUI_ManagerMain(head);
 	if (itemManegeChoose == 1)
 	{
 		//Get user input one by one.
 		printf("Add a new item\n");
-		struct items *newItem=0;
+		struct items *newItem;
+		newItem = LoadItemList();
 		printf("Input new item name.\n");
 		scanf("%s", newItem->name);//Crash here.
 		printf("Input new initial inventory.\n");
@@ -447,9 +452,15 @@ void GUI_ManagerItem()
 		int addReturn;
 		addReturn = AddItem(newItem, newItem->name, newItem->amount, newItem->price);
 		if (addReturn == -1)
+		{
 			printf("Item added failed. An existing item has a same name.\n");
+			//return 0;
+		}
 		if (addReturn == 0)
+		{
 			printf("Item added succeed.\n");
+			//return 1;
+		}
 	}
 	if (itemManegeChoose == 2)
 	{
@@ -458,13 +469,13 @@ void GUI_ManagerItem()
 		beforeDel = LoadItemList();
 		int id = 1;
 		printf("ID  Item         Amount    Price  \n");
-		printf("0   Go back\n");
-		do
+		printf("0   Exit\n");
+		while (head)
 		{
-			printf("%d   %s            %d       %2f   \n", id, beforeDel->name, beforeDel->amount, beforeDel->price);
-			beforeDel = beforeDel->next;
+			printf("%d  %s      %d    %.2f   \n", id, head->name, head->amount, head->price);
+			head = head->next;
 			id++;
-		} while (beforeDel == NULL);
+		}
 		printf("\n");
 		printf("Input the ID of deleting item.\n");
 		printf("\n");
@@ -472,9 +483,9 @@ void GUI_ManagerItem()
 		int delID;
 		scanf("%d", &delID);
 		if (delID == 0)
-			GUI_ManagerMain();
+			GUI_ManagerMain(head);
 		struct items *delConfirm;
-		delConfirm = SearchItem(delID);
+		delConfirm = SearchItem(head,delID);
 		printf("Item you want to delete is %s. Its inventory is %d. Its unit price is %f.\nARE YOU SURE TO DELETE IT?\n", delConfirm->name, delConfirm->amount, delConfirm->price);
 		printf("\n");
 		printf("1. Confirm\n2. Suspend\n");
@@ -485,7 +496,8 @@ void GUI_ManagerItem()
 		if (delConfirmInput == 1)
 			int delReturn = DeleteItem(beforeDel, delID);
 		if (delConfirmInput == 2)
-			GUI_ManagerItem();
+			GUI_ManagerItem(head);
+		FreeItems(delConfirm);
 	}
 	//Exit this function.
 	printf("What do you want to do next?\n");
@@ -497,18 +509,18 @@ void GUI_ManagerItem()
 	scanf("%d", &itemBack);
 	switch (itemBack)
 	{
-	case 1: GUI_ManagerItem();
+	case 1: GUI_ManagerItem(head);
 		break;
-	case 2: GUI_CustomerMain();
+	case 2: GUI_CustomerMain(head);
 		break;
-	case 3: Login();
+	case 3: Login(head);
 		break;
 	default: printf("Invalid input!\n");
 		break;
 	}
 }
 
-void GUI_ManagerPwd()
+void GUI_ManagerPwd(struct items* head)
 {
 	system("cls");
 	printf("  ************************************  \n");
@@ -522,10 +534,18 @@ void GUI_ManagerPwd()
 	printf("Change your password.\n");
 	printf("\n");
 	char currentPwd[20];
+	int i;
 	for ( ; ; )
 	{
 		printf("Input current password.\n");
-		scanf("%s", currentPwd);
+		for (i = 0; i < 20; i++)
+		{
+			currentPwd[i] = _getch();
+			if (currentPwd[i] == '\r')
+				break;
+			printf("*");
+		}
+		currentPwd[i] = '\0';
 		printf("\nVerifying your password...\n");
 		if (CheckPassword(currentPwd))
 			printf("Password is incorrect!\n\n");
@@ -542,19 +562,34 @@ void GUI_ManagerPwd()
 		for (;;)
 		{
 			printf("Input your new password.\n");
-			scanf("%s", newPwd);
+			for (i = 0; i < 20; i++)
+			{
+				newPwd[i] = _getch();
+				if (newPwd[i] == '\r')
+					break;
+				printf("*");
+			}
+			newPwd[i] = '\0';
 			if (strlen(newPwd)<6 || strlen(newPwd)>20)
 				printf("Input a password between 6 to 20 characters!\n\n");
 			else break;
 		}
-		printf("Input new password again.\n");
-		scanf("%s", newPwdVerify);
+		printf("\nInput new password again.\n");
+		int i;
+		for (i = 0; i < 20; i++)
+		{
+			newPwdVerify[i] = _getch();
+			if (newPwdVerify[i] == '\r')
+				break;
+			printf("*");
+		}
+		newPwdVerify[i] = '\0';
 		if (strcmp(newPwd,newPwdVerify)!=0)
 			printf("Inputs are not same!\n\n");
 		else
 			break;
 	}
-	printf("Storing your new password...\n\n");
+	printf("\nStoring your new password...\n\n");
 	char szDigest[16];
 	MD5Digest(newPwd,strlen(newPwd),szDigest);
 	int newPwdStore;
@@ -573,9 +608,9 @@ void GUI_ManagerPwd()
 	scanf("%d", &pwdBack);
 	switch (pwdBack)
 	{
-	case 1: GUI_ManagerMain();
+	case 1: GUI_ManagerMain(head);
 		break;
-	case 2: Login();
+	case 2: Login(head);
 		break;
 	default: printf("Invalid input!\n");
 		break;
@@ -601,16 +636,15 @@ int CheckPassword(char *password)
 	return 0;
 }
 
-struct items *SearchItem(int id)
+
+struct items *SearchItem(struct items *head, int id)
 {
-	struct items *current;
-	current=LoadItemList();
 	int i;
 	for (i=0;i<id-1;i++)
 	{
-		if (current == NULL)
+		if (head == NULL)
 			return 0;
-		current=current->next;
+		head=head->next;
 	}
-	return current;
+	return head;
 }
