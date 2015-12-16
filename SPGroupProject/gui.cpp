@@ -157,24 +157,31 @@ void GUI_CustomerMain(struct items* head)
 	if (customerList==NULL)
 		printf("Load item list failed. Please try again.\n");
 	printf("We offer these drinks! :)\n");
-	printf("ID  Item         Amount    Price  \n");
-	printf("0   Exit\n");
+	printf("ID\tItem\tAmount\tPrice\n");
+	printf("0\tExit\n");
 	int id=1;
 	while (customerList)
 	{
-		printf("%d  %s      %d    %.2f   \n",id,customerList->name,customerList->amount,customerList->price);
+		printf("%d\t%s\t%d\t%.2f\n",id,customerList->name,customerList->amount,customerList->price);
 		customerList=customerList->next;
 		id++;
 	}
 	//Get user input.
 	printf("\n");
-	printf("Please input your choice by typing the item number. Type 0 to go back.\n");
-	printf("\n");
-	printf("YOU CHOOSE:    ");
 	int customerItemChoice;
-	scanf("%d",&customerItemChoice);
-	if (customerItemChoice==0)
-		Login(head);
+	for (;;)
+	{
+		printf("Please input your choice by typing the item number. Type 0 to go back.\n");
+		printf("\n");
+		printf("YOU CHOOSE:    ");
+		scanf("%d", &customerItemChoice);
+		if (customerItemChoice == 0)
+			Login(head);
+		else if (customerItemChoice > id)
+			printf("Invaild input!\n");
+		else
+			break;
+	}
 	GUI_CustomerNumber(head,customerItemChoice);
 }
 
@@ -224,7 +231,7 @@ void GUI_CustomerNumber(struct items* head, int itemID)
 			printf("Please pay enough money!\n");
 	}
 	printf("Change is %.2f, thank you!\n",change);
-	if (ChangeAmount(head, -1, itemID) != 0)
+	if (ChangeAmount(head, -customerBuyNumber, itemID) != 0)
 		printf("Error occurss in changing inventory.\n");
 	if (StorageItemList(head) != 0)
 		printf("Error occurs in storing changing to file.\n");
@@ -295,11 +302,11 @@ void GUI_ManagerInventory(struct items* head)
 	struct items *changeInventory;
 	changeInventory = head;
 	int id = 1;
-	printf("ID  Item         Amount    Price  \n");
-	printf("0   Exit\n");
+	printf("ID\tItem\tAmount\tPrice\n");
+	printf("0\tExit\n");
 	while (changeInventory)
 	{
-		printf("%d  %s      %d    %.2f   \n", id, changeInventory->name, changeInventory->amount, changeInventory->price);
+		printf("%d\t%s\t%d\t%.2f\n", id, changeInventory->name, changeInventory->amount, changeInventory->price);
 		changeInventory = changeInventory->next;
 		id++;
 	}
@@ -377,11 +384,11 @@ void GUI_ManagerPrice(struct items* head)
 	struct items *managerPrice;
 	managerPrice = head;
 	int id = 1;
-	printf("ID  Item         Amount    Price  \n");
-	printf("0   Exit\n");
+	printf("ID\tItem\tAmount\tPrice\n");
+	printf("0\tExit\n");
 	while (managerPrice)
 	{
-		printf("%d  %s      %d    %.2f   \n", id, managerPrice->name, managerPrice->amount, managerPrice->price);
+		printf("%d\t%s\t%d\t%.2f\n", id, managerPrice->name, managerPrice->amount, managerPrice->price);
 		managerPrice = managerPrice->next;
 		id++;
 	}
@@ -473,7 +480,7 @@ void GUI_ManagerItem(struct items* head)
 		scanf("%lf", &newItem.price);
 		printf("The new item is %s, initial inventory is %d, unit price is %.2f.\n", newItem.name, newItem.amount, newItem.price);
 		//Store new item to the dat file.
-		printf("Applying your modication...\n");
+		printf("Applying your modification...\n");
 		int addReturn;
 		int storeReturn;
 		addReturn = AddItem(head, newItem.name, newItem.amount, newItem.price);
@@ -500,11 +507,11 @@ void GUI_ManagerItem(struct items* head)
 		struct items *beforeDel;
 		beforeDel = head;
 		int id = 1;
-		printf("ID  Item         Amount    Price  \n");
-		printf("0   Exit\n");
+		printf("ID\tItem\tAmount\tPrice\n");
+		printf("0\tExit\n");
 		while (beforeDel)
 		{
-			printf("%d  %s      %d    %.2f   \n", id, beforeDel->name, beforeDel->amount, beforeDel->price);
+			printf("%d\t%s\t%d\t%.2f\n", id, beforeDel->name, beforeDel->amount, beforeDel->price);
 			beforeDel = beforeDel->next;
 			id++;
 		}
@@ -525,7 +532,7 @@ void GUI_ManagerItem(struct items* head)
 		printf("INPUT  ");
 		int delConfirmInput;
 		scanf("%d", &delConfirmInput);
-		if (delConfirmInput == 1)//Complier skip this part directly...
+		if (delConfirmInput == 1)
 		{
 			int delReturn = DeleteItem(head, delID);
 			if (delReturn == 0)

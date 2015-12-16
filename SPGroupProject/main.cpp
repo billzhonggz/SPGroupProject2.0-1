@@ -18,14 +18,9 @@ int main(int argc, const char * argv[]) {
 	// test-------------------------------------------------------------
 	//printf("The value of softwareStatus is %d\n", softwareStatus);
 	//printf("The value of debugMode is %d\n", debugMode);
-<<<<<<< HEAD
 
 	if (debugMode) softwareStatus = 1;
-=======
->>>>>>> refs/remotes/JiayuYANG/master
 
-	if(debugMode) softwareStatus = 1;
-	
 	// example of de. a variable of type char
 	// notice that: suggest to add "#" before variable name
 	// char string[20];
@@ -35,30 +30,19 @@ int main(int argc, const char * argv[]) {
 
 
 	// example of change a value
-<<<<<<< HEAD
 	// avoid to use this func. unless really in need 
-=======
-	// avoid to use this func. unless really in need 
->>>>>>> refs/remotes/JiayuYANG/master
 	//ChangeConfigInt("#softwareStatus",0);
 	//ChangeConfigChar("#string","helloWorld");
 
 	// start
-<<<<<<< HEAD
 	if (softwareStatus) // check if the first time running this program.
 	{
 		if (FirstScreen()) // check if error, if not, change softwareStatus
-=======
-	if(softwareStatus) // check if the first time running this program.
-	{
-		if(FirstScreen()) // check if error, if not, change softwareStatus
->>>>>>> refs/remotes/JiayuYANG/master
 		{
 			ErrorInformation("FirstScreen");
 		}
 		else
 		{
-<<<<<<< HEAD
 			ChangeConfigInt("#softwareStatus", 0);
 			Sleep(1500);
 		}
@@ -70,17 +54,4 @@ int main(int argc, const char * argv[]) {
 
 	return 0;
 
-=======
-			ChangeConfigInt("#softwareStatus",0);
-			Sleep(1500);
-		}
-	}
-	
-	if(Login(itemList)) ErrorInformation("Login");
-	
-
-
-    return 0;
-
->>>>>>> refs/remotes/JiayuYANG/master
 }
