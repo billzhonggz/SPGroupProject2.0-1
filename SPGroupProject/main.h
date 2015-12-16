@@ -4,7 +4,6 @@
 //  Copyright (c) 2015 TheBestGroup. All rights reserved.
 //
 #include <stdio.h>
-#include <windows.h>
 
 struct items{
     char name[10];
@@ -81,23 +80,26 @@ int FirstScreen();
         // 0: Success.
         // Other: error.
 
-int Login();//Choosing Customer or Manager GUI.
-void GUI_CustomerMain();//Customer interface.
-void GUI_CustomerNumber(int itemID);//To confirm item number buy by customer. --By Bill.
-void GUI_ManagerMain();//Managing interface.
-void GUI_ManagerInventory();//Manager submenu. Change inventory of each drink.
-void GUI_ManagerPrice();//Manager submenu. Change unit price of each drink.
-void GUI_ManagerItem();//Manager submenu. Change items.
-void GUI_ManagerPwd();//Manager submenu. Change password.
+int Login(struct items* head);//Choosing Customer or Manager GUI.
+void GUI_CustomerMain(struct items* head);//Customer interface.
+void GUI_CustomerNumber(struct items* head,int itemID);//To confirm item number buy by customer. --By Bill.
+void GUI_ManagerMain(struct items* head);//Managing interface.
+void GUI_ManagerInventory(struct items* head);//Manager submenu. Change inventory of each drink.
+void GUI_ManagerPrice(struct items* head);//Manager submenu. Change unit price of each drink.
+void GUI_ManagerItem(struct items* head);
+	//Manager submenu. Change items.
+	//Return 1 when item changed.
+	//Return 0 when change doesn't happen.
+void GUI_ManagerPwd(struct items* head);//Manager submenu. Change password.
         //Customer and Manager GUI are used to:
         //1. Display the interface continously.
         //2. Read orders.
         //3. Call relative functions to excute the function.
         //4. Display result of the excution to the screen by called fuctions' return values.
-struct items *SearchItem(int id);
+struct items *SearchItem(struct items* head,int id);
 		//This function is used to search linkedlist "items" by id.
 		//Return NULL when failed. Return address of result when succeed. 
-		//Created by Bill. Incomplication is in GUI.cpp.
+		//Created by Bill. Implementcation is in GUI.cpp.
 
     //Items Data Change:
 

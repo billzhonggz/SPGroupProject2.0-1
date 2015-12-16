@@ -1,9 +1,9 @@
 ;debug mode setting
 ;open:1
 ;close:0
-#debugMode 0
-;1:first open the software
-;0:not the first time open the software
+#debugMode 1
+;0:first open the software
+;1:not the first time open the software
 #softwareStatus 0
 ;administrator username
 ;password(MD5)

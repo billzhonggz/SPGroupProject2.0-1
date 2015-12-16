@@ -5,19 +5,22 @@
 #define _CRT_SECURE_NO_WARNINGS
 //  Copyright (c) 2015 TheBestGroup. All rights reserved.
 // 
+
 #include "main.h"
 
 int main(int argc, const char * argv[]) {
+	struct items *itemList;
+	itemList = LoadItemList();
 	// example of de. a variable of type int
 	// notice that: suggest to add "#" before variable name
 	int softwareStatus = InitializeInt("#softwareStatus");
-	int debugMode      = InitializeInt("#debugMode");
+	int debugMode = InitializeInt("#debugMode");
 	// test-------------------------------------------------------------
-	//printf("The value of softwareStatus is %d\n",softwareStatus);
-    //printf("The value of debugMode is %d\n",debugMode);
-	
-	if(debugMode) softwareStatus = 1;
+	//printf("The value of softwareStatus is %d\n", softwareStatus);
+	//printf("The value of debugMode is %d\n", debugMode);
 
+	if(debugMode) softwareStatus = 1;
+	
 	// example of de. a variable of type char
 	// notice that: suggest to add "#" before variable name
 	// char string[20];
@@ -50,4 +53,5 @@ int main(int argc, const char * argv[]) {
 
 
     return 0;
+
 }
