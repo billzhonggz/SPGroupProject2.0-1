@@ -19,8 +19,8 @@ int main(int argc, const char * argv[]) {
 	//printf("The value of softwareStatus is %d\n", softwareStatus);
 	//printf("The value of debugMode is %d\n", debugMode);
 
-	if(debugMode) softwareStatus = 1;
-	
+	if (debugMode) softwareStatus = 1;
+
 	// example of de. a variable of type char
 	// notice that: suggest to add "#" before variable name
 	// char string[20];
@@ -35,23 +35,23 @@ int main(int argc, const char * argv[]) {
 	//ChangeConfigChar("#string","helloWorld");
 
 	// start
-	if(softwareStatus) // check if the first time running this program.
+	if (softwareStatus) // check if the first time running this program.
 	{
-		if(FirstScreen()) // check if error, if not, change softwareStatus
+		if (FirstScreen()) // check if error, if not, change softwareStatus
 		{
 			ErrorInformation("FirstScreen");
 		}
 		else
 		{
-			ChangeConfigInt("#softwareStatus",0);
+			ChangeConfigInt("#softwareStatus", 0);
 			Sleep(1500);
 		}
 	}
-	
-	if(Login(itemList)) ErrorInformation("Login");
-	
+
+	if (Login(itemList)) ErrorInformation("Login");
 
 
-    return 0;
+
+	return 0;
 
 }

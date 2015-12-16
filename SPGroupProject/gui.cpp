@@ -152,28 +152,36 @@ void GUI_CustomerMain(struct items* head)
 	printf("Now loading drink item list...\n");
 	printf("\n");
 	//Get first address.
-	if (head==NULL)
+	struct items *customerList;
+	customerList = head;
+	if (customerList==NULL)
 		printf("Load item list failed. Please try again.\n");
 	printf("We offer these drinks! :)\n");
-	printf("ID  Item         Amount    Price  \n");
-	printf("0   Exit\n");
+	printf("ID\tItem\tAmount\tPrice\n");
+	printf("0\tExit\n");
 	int id=1;
-	while (head)
+	while (customerList)
 	{
-		printf("%d  %s      %d    %.2f   \n",id,head->name,head->amount,head->price);
-		head=head->next;
+		printf("%d\t%s\t%d\t%.2f\n",id,customerList->name,customerList->amount,customerList->price);
+		customerList=customerList->next;
 		id++;
 	}
-	//FreeItems(head);
 	//Get user input.
 	printf("\n");
-	printf("Please input your choice by typing the item number. Type 0 to go back.\n");
-	printf("\n");
-	printf("YOU CHOOSE:    ");
 	int customerItemChoice;
-	scanf("%d",&customerItemChoice);
-	if (customerItemChoice==0)
-		Login(head);
+	for (;;)
+	{
+		printf("Please input your choice by typing the item number. Type 0 to go back.\n");
+		printf("\n");
+		printf("YOU CHOOSE:    ");
+		scanf("%d", &customerItemChoice);
+		if (customerItemChoice == 0)
+			Login(head);
+		else if (customerItemChoice > id)
+			printf("Invaild input!\n");
+		else
+			break;
+	}
 	GUI_CustomerNumber(head,customerItemChoice);
 }
 
@@ -194,25 +202,39 @@ void GUI_CustomerNumber(struct items* head, int itemID)
 		printf("Invalid input!\n");
 	printf("Your choice is %s. Avibile amount is %d. Unit price is %.2f.\n",customerSearchResult->name,customerSearchResult->amount,customerSearchResult->price);
 	printf("\n");
-	printf("How many %s you want to buy?\n",customerSearchResult->name);
 	int customerBuyNumber;
-	printf("NUMBER YOU WANT TO BUY IS     ");
-	scanf("%d",&customerBuyNumber);
-	printf("\n");
+	for (;;)
+	{
+		printf("How many %s you want to buy?\n", customerSearchResult->name);
+		printf("NUMBER YOU WANT TO BUY IS  ");
+		scanf("%d", &customerBuyNumber);
+		printf("\n");
+		if (customerBuyNumber > customerSearchResult->amount)
+			printf("No enough inventory!\n");
+		else
+			break;
+	}
 	double totalPrice;
-	struct items *calcPrice;
-	calcPrice = LoadItemList();
-	totalPrice=CalculatePrice(calcPrice,customerBuyNumber,itemID);
-	printf("You will buy %d %s. You should pay %2f in total.\n",customerSearchResult->price,customerSearchResult->name,totalPrice);
+	totalPrice=CalculatePrice(head,customerBuyNumber,itemID);
+	printf("You will buy %d %s. You should pay %.2f in total.\n",customerBuyNumber,customerSearchResult->name,totalPrice);
 	printf("\n");
-	double paid;
-	printf("YOU PAY     ");
-	scanf("%2f",&paid);
-	if (paid < totalPrice)
-		printf("Please pay enough money!\n");
-	printf("Change is %2f, thank you!\n",paid-totalPrice);
-	FreeItems(customerSearchResult);
-	FreeItems(calcPrice);
+	int paid;
+	double change;
+	for (;;)
+	{
+		printf("YOU PAY ");
+		scanf("%d", &paid);
+		change = paid - totalPrice;
+		if (change >= 0)
+			break;
+		else
+			printf("Please pay enough money!\n");
+	}
+	printf("Change is %.2f, thank you!\n",change);
+	if (ChangeAmount(head, -customerBuyNumber, itemID) != 0)
+		printf("Error occurss in changing inventory.\n");
+	if (StorageItemList(head) != 0)
+		printf("Error occurs in storing changing to file.\n");
 	//Go back choose.
 	printf("What do you want to do next?\n");
 	printf("\n");
@@ -278,14 +300,14 @@ void GUI_ManagerInventory(struct items* head)
 	printf("\n");
 	//Print out current item list.
 	struct items *changeInventory;
-	changeInventory = LoadItemList();
+	changeInventory = head;
 	int id = 1;
-	printf("ID  Item         Amount    Price  \n");
-	printf("0   Exit\n");
-	while (head)
+	printf("ID\tItem\tAmount\tPrice\n");
+	printf("0\tExit\n");
+	while (changeInventory)
 	{
-		printf("%d  %s      %d    %.2f   \n", id, head->name, head->amount, head->price);
-		head = head->next;
+		printf("%d\t%s\t%d\t%.2f\n", id, changeInventory->name, changeInventory->amount, changeInventory->price);
+		changeInventory = changeInventory->next;
 		id++;
 	}
 	printf("\n");
@@ -307,7 +329,7 @@ void GUI_ManagerInventory(struct items* head)
 	int inventoryChange;
 	scanf("%d", &inventoryChange);
 	int changeReturn;
-	changeReturn = ChangeAmount(beforeChangeItem, inventoryChange, changeID);
+	changeReturn = ChangeAmount(head, inventoryChange, changeID);
 	if (changeReturn == -1)
 		printf("Change inventory failed: ID matching failed.\n");
 	if (changeReturn == -2)
@@ -317,7 +339,13 @@ void GUI_ManagerInventory(struct items* head)
 	//Print out changed item to show result.
 	struct items *afterChangeItem;
 	afterChangeItem = SearchItem(head,changeID);
-	printf("Inventory of item %s has changed to %d.\n", afterChangeItem->name, afterChangeItem->amount);
+	printf("Store change to file.\n");
+	int storeReturn;
+	storeReturn = StorageItemList(head);
+	if (storeReturn == -1)
+		printf("Store to file failed.\n");
+	else
+		printf("Inventory of item %s has changed to %d.\n", afterChangeItem->name, afterChangeItem->amount);
 	printf("\n");
 	printf("What do you want to do next?\n");
 	printf("\n");
@@ -331,7 +359,7 @@ void GUI_ManagerInventory(struct items* head)
 	{
 		case 1: GUI_ManagerInventory(head);
 			break;
-		case 2: GUI_CustomerMain(head);
+		case 2: GUI_ManagerMain(head);
 			break;
 		case 3: Login(head);
 			break;
@@ -353,13 +381,15 @@ void GUI_ManagerPrice(struct items* head)
 	printf("\n");
 	printf("        ****UNIT PRICE CHANGE****       \n");
 	printf("\n");
+	struct items *managerPrice;
+	managerPrice = head;
 	int id = 1;
-	printf("ID  Item         Amount    Price  \n");
-	printf("0   Exit\n");
-	while (head)
+	printf("ID\tItem\tAmount\tPrice\n");
+	printf("0\tExit\n");
+	while (managerPrice)
 	{
-		printf("%d  %s      %d    %.2f   \n", id, head->name, head->amount, head->price);
-		head = head->next;
+		printf("%d\t%s\t%d\t%.2f\n", id, managerPrice->name, managerPrice->amount, managerPrice->price);
+		managerPrice = managerPrice->next;
 		id++;
 	}
 	printf("\n");
@@ -374,25 +404,28 @@ void GUI_ManagerPrice(struct items* head)
 	//Search and print out requesting item.
 	struct items *beforeChangeItem;
 	beforeChangeItem = SearchItem(head,changeID);
-	printf("Item you want to change is %s, current price is %d.\n", beforeChangeItem->name, beforeChangeItem->price);
+	printf("Item you want to change is %s, current price is %.2f.\n", beforeChangeItem->name, beforeChangeItem->price);
 	printf("\n");
 	//Change price.
 	printf("INPUT NEW PRICE  ");
 	double priceChange;
-	scanf("%d", &priceChange);
+	scanf("%lf", &priceChange);
 	int changeReturn;
-	changeReturn = ChangePrice(beforeChangeItem, priceChange, changeID);
+	changeReturn = ChangePrice(head, priceChange, changeID);
 	if (changeReturn == -1)
 		printf("Change price failed: ID matching failed.\n");
 	if (changeReturn == 0)
 		printf("Change price succeed.\n");
-	FreeItems(beforeChangeItem);
 	//Print out changed item to show result.
 	struct items *afterChangeItem;
 	afterChangeItem = SearchItem(head,changeID);
-	printf("Inventory of item %s has changed to %d.\n", afterChangeItem->name, afterChangeItem->price);
+	int storeReturn;
+	storeReturn = StorageItemList(head);
+	if (storeReturn == -1)
+		printf("Store to file failed.\n");
+	else
+		printf("Unit price of item %s has changed to %.2f.\n", afterChangeItem->name, afterChangeItem->price);
 	printf("\n");
-	FreeItems(afterChangeItem);
 	//Exit this function.
 	printf("What do you want to do next?\n");
 	printf("\n");
@@ -405,7 +438,7 @@ void GUI_ManagerPrice(struct items* head)
 	{
 	case 1: GUI_ManagerPrice(head);
 		break;
-	case 2: GUI_CustomerMain(head);
+	case 2: GUI_ManagerMain(head);
 		break;
 	case 3: Login(head);
 		break;
@@ -438,19 +471,19 @@ void GUI_ManagerItem(struct items* head)
 	{
 		//Get user input one by one.
 		printf("Add a new item\n");
-		struct items *newItem;
-		newItem = LoadItemList();
+		struct items newItem;
 		printf("Input new item name.\n");
-		scanf("%s", newItem->name);//Crash here.
+		scanf("%s", newItem.name);//Crash here.
 		printf("Input new initial inventory.\n");
-		scanf("%d", &newItem->amount);
+		scanf("%d", &newItem.amount);
 		printf("Input new unit price.\n");
-		scanf("%2f", &newItem->price);
-		printf("The new item is %s, initial inventory is %d, unit price is %2f.\n", newItem->name, newItem->amount, newItem->price);
+		scanf("%lf", &newItem.price);
+		printf("The new item is %s, initial inventory is %d, unit price is %.2f.\n", newItem.name, newItem.amount, newItem.price);
 		//Store new item to the dat file.
-		printf("Applying your modication...\n");
+		printf("Applying your modification...\n");
 		int addReturn;
-		addReturn = AddItem(newItem, newItem->name, newItem->amount, newItem->price);
+		int storeReturn;
+		addReturn = AddItem(head, newItem.name, newItem.amount, newItem.price);
 		if (addReturn == -1)
 		{
 			printf("Item added failed. An existing item has a same name.\n");
@@ -459,6 +492,12 @@ void GUI_ManagerItem(struct items* head)
 		if (addReturn == 0)
 		{
 			printf("Item added succeed.\n");
+			storeReturn = StorageItemList(head);
+			if (storeReturn == -1)
+				printf("Store to file failed.\n");
+			else
+				printf("Store to file succeed.\n");
+			printf("\n");
 			//return 1;
 		}
 	}
@@ -466,14 +505,14 @@ void GUI_ManagerItem(struct items* head)
 	{
 		printf("Delete an item.\n");
 		struct items *beforeDel;
-		beforeDel = LoadItemList();
+		beforeDel = head;
 		int id = 1;
-		printf("ID  Item         Amount    Price  \n");
-		printf("0   Exit\n");
-		while (head)
+		printf("ID\tItem\tAmount\tPrice\n");
+		printf("0\tExit\n");
+		while (beforeDel)
 		{
-			printf("%d  %s      %d    %.2f   \n", id, head->name, head->amount, head->price);
-			head = head->next;
+			printf("%d\t%s\t%d\t%.2f\n", id, beforeDel->name, beforeDel->amount, beforeDel->price);
+			beforeDel = beforeDel->next;
 			id++;
 		}
 		printf("\n");
@@ -486,7 +525,7 @@ void GUI_ManagerItem(struct items* head)
 			GUI_ManagerMain(head);
 		struct items *delConfirm;
 		delConfirm = SearchItem(head,delID);
-		printf("Item you want to delete is %s. Its inventory is %d. Its unit price is %f.\nARE YOU SURE TO DELETE IT?\n", delConfirm->name, delConfirm->amount, delConfirm->price);
+		printf("Item you want to delete is %s. Its inventory is %d. Its unit price is %.2f.\nARE YOU SURE TO DELETE IT?\n", delConfirm->name, delConfirm->amount, delConfirm->price);
 		printf("\n");
 		printf("1. Confirm\n2. Suspend\n");
 		printf("\n");
@@ -494,10 +533,21 @@ void GUI_ManagerItem(struct items* head)
 		int delConfirmInput;
 		scanf("%d", &delConfirmInput);
 		if (delConfirmInput == 1)
-			int delReturn = DeleteItem(beforeDel, delID);
+		{
+			int delReturn = DeleteItem(head, delID);
+			if (delReturn == 0)
+			{
+				printf("Target deleted successfully. Now storing to the file.\n");
+				int storeReturn = StorageItemList(head);
+				if (storeReturn == -1)
+					printf("Store to file failed.\n");
+				else
+					printf("Store to file succeed.\n");
+				printf("\n");
+			}
+		}
 		if (delConfirmInput == 2)
 			GUI_ManagerItem(head);
-		FreeItems(delConfirm);
 	}
 	//Exit this function.
 	printf("What do you want to do next?\n");
