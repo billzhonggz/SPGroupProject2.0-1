@@ -16,10 +16,11 @@ int main(int argc, const char * argv[]) {
 	int softwareStatus = InitializeInt("#softwareStatus");
 	int debugMode = InitializeInt("#debugMode");
 	// test-------------------------------------------------------------
-	printf("The value of softwareStatus is %d\n", softwareStatus);
-	printf("The value of debugMode is %d\n", debugMode);
+	//printf("The value of softwareStatus is %d\n", softwareStatus);
+	//printf("The value of debugMode is %d\n", debugMode);
 
-
+	if(debugMode) softwareStatus = 1;
+	
 	// example of de. a variable of type char
 	// notice that: suggest to add "#" before variable name
 	// char string[20];
@@ -30,15 +31,27 @@ int main(int argc, const char * argv[]) {
 
 	// example of change a value
 	// avoid to use this func. unless really in need 
-	ChangeConfigInt("#softwareStatus", 0);
-	ChangeConfigChar("#string", "helloWorld");
+	//ChangeConfigInt("#softwareStatus",0);
+	//ChangeConfigChar("#string","helloWorld");
 
-	// example of call a function
+	// start
+	if(softwareStatus) // check if the first time running this program.
+	{
+		if(FirstScreen()) // check if error, if not, change softwareStatus
+		{
+			ErrorInformation("FirstScreen");
+		}
+		else
+		{
+			ChangeConfigInt("#softwareStatus",0);
+			Sleep(1500);
+		}
+	}
+	
+	if(Login(itemList)) ErrorInformation("Login");
+	
 
-	if (FirstScreen()) ErrorInformation("FirstScreen");
-	// test
-	Login(itemList);
 
-	//Initialize a item list.
-	return 0;
+    return 0;
+
 }
