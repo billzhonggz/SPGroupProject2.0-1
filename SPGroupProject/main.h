@@ -176,11 +176,6 @@ double CalculatePrice(struct items* head, int amount, int itemID);
 
 // Others
 
-int Egg(void);
-// Program printed eggshell
-// hahaha
-// haha
-// ha
 
 
 
