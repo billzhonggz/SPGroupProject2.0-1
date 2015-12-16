@@ -45,7 +45,7 @@ int main(int argc, const char * argv[]) {
 		}
 	}
 	
-	if(Login()) ErrorInformation("Login");
+	if(Login(itemList)) ErrorInformation("Login");
 	
 
 
