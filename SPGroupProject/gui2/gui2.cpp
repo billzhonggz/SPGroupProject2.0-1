@@ -210,7 +210,7 @@ int Login()
 		}
 		else
 			printf("Invalid input!\n");
-	}	
+	}
 }
 
 int GUI_CustomerMain(struct items* head)
@@ -347,20 +347,23 @@ int GUI_ManagerMain()
 	for (;;)
 	{
 		scanf("%d", &managerMainInput);
-		if (managerMainInput == 1)
-			return 1;
-		if (managerMainInput == 2)
-			return 2;
-		if (managerMainInput == 3)
-			return 3;
-		if (managerMainInput == 4)
-			return 4;
-		if (managerMainInput == 5)
-			return 5;
-		else
-			printf("Invaild input!\n\nPlease try again.\n");
+		switch (managerMainInput)
+		{
+		case 1: return 1;
+			break;
+		case 2: return 2;
+			break;
+		case 3: return 3;
+			break;
+		case 4: return 4;
+			break;
+		case 5: return 5;
+		default: printf("Invaild input!\n\nPlease try again.\n");
+			break;
+		}
+
 	}
-	
+
 }
 
 int GUI_ManagerInventory(struct items* head)
@@ -435,14 +438,17 @@ int GUI_ManagerInventory(struct items* head)
 	for (;;)
 	{
 		scanf("%d", &inventoryBack);
-		if (inventoryBack == 1)
-			return 1;
-		if (inventoryBack == 2)
-			return 2;
-		if (inventoryBack == 3)
-			return 3;
-		else
-			printf("Invaild input!\n\nPlease try again.\n");
+		switch (inventoryBack)
+		{
+		case 1: return 1;
+			break;
+		case 2: return 2;
+			break;
+		case 3: return 3;
+			break;
+		default: printf("Invaild input!\n\nPlease try again.\n");
+			break;
+		}
 	}
 }
 
@@ -655,10 +661,10 @@ int GUI_ManagerItem(struct items* head)
 				else
 					printf("Invaild input!\n\nPlease try again.\n");
 			}
-			
+
 		}
 	}
-	
+
 	//Exit this function.
 	printf("What do you want to do next?\n");
 	printf("\n");
