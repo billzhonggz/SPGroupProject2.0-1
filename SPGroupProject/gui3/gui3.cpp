@@ -40,7 +40,8 @@ int FirstScreen()
 	char pwdVerify[17];
 	int pwdGet = 0;
 	int i;
-	int j;
+	//int j;
+	int k;
 	while (1)
 	{
 		while (1)
@@ -55,7 +56,20 @@ int FirstScreen()
 				{
 					break;
 				}
-				else if (i < 16)
+				k = i;
+				//printf("pwdInput[i] = %c\n", pwdInput[i]);
+				//printf("i = %d\n", i);
+				if (pwdInput[i] == 8 && i != 0)
+				{
+					printf("\b \b");
+					i--;
+					i--;
+				}
+				else if (pwdInput[i] == 8 && i == 0)
+				{
+					i--;
+				}
+				if (pwdInput[k] != 8 && i < 16)
 				{
 					printf("*");
 				}
@@ -73,44 +87,59 @@ int FirstScreen()
 			}
 		}
 
-			
+
 
 		printf("\nPlease input your password again.\n");
 
 		while (1)
 		{
-			j = 0;
-			//printf("Please input your password again.\n");
+			i = 0;
+			//printf("Please input your password.\n");
 			while (1)
 			{
-				if (j > 16) j = 16;
-				pwdVerify[j] = _getch();
-				if (pwdVerify[j] == '\r')
+				if (i > 16) i = 16;
+				pwdVerify[i] = _getch();
+				if (pwdVerify[i] == '\r')
 				{
 					break;
 				}
-				else if (j < 16)
+				k = i;
+				//printf("pwdInput[i] = %c\n", pwdInput[i]);
+				//printf("i = %d\n", i);
+				if (pwdVerify[i] == 8 && i != 0)
+				{
+					printf("\b \b");
+					i--;
+					i--;
+				}
+				else if (pwdVerify[i] == 8 && i == 0)
+				{
+					i--;
+				}
+				if (pwdVerify[k] != 8 && i < 16)
 				{
 					printf("*");
 				}
-				j++;
+				i++;
 			}
-			pwdVerify[j] = '\0';
 
-			if (strcmp(pwdInput, pwdVerify) != 0)
+			pwdVerify[i] = '\0';
+			if (strcmp(pwdVerify, pwdVerify) != 0)
 			{
 				printf("\nInputs are not same!\n\n");
 				break;
-			}	
+			}
 			else
 			{
 				pwdGet = 1;
 				break;
 			}
-					
+
 		}
 		if (pwdGet) break;
 	}
+
+
 	
 	printf("\nEncrypting your password...\n\n");
 	char szDigest[16];
@@ -179,13 +208,14 @@ int Login(struct items *head)
 	if (loginChoice==2)
 	{
 		int pwdCheck=0;
-		int i;
+		int i,k;
 		char pwdInput[17];
-		while(1)
+
+		while (1)
 		{
 			i = 0;
 			printf("Please input your password.\n");
-			while(1)
+			while (1)
 			{
 				if (i > 16) i = 16;
 				pwdInput[i] = _getch();
@@ -193,22 +223,32 @@ int Login(struct items *head)
 				{
 					break;
 				}
-				else if (i < 16)
+				k = i;
+				//printf("pwdInput[i] = %c\n", pwdInput[i]);
+				//printf("i = %d\n", i);
+				if (pwdInput[i] == 8 && i != 0)
+				{
+					printf("\b \b");
+					i--;
+					i--;
+				}
+				else if (pwdInput[i] == 8 && i == 0)
+				{
+					i--;
+				}
+				if (pwdInput[k] != 8 && i < 16)
 				{
 					printf("*");
-				}	
+				}
 				i++;
 			}
+
 			pwdInput[i] = '\0';
 			if (pwdCheck != CheckPassword(pwdInput))
 				printf("\nPassword is incorrect!\n\n");
 			else
 				break;
-
 		}
-		//while (pwdCheck==1);
-		//printf("Debug mode: Go to Manager\n");
-		
 		return 2;// GUI_ManagerMain(head);
 	}
 	else 
@@ -872,8 +912,57 @@ int  GUI_ManagerPwd(struct items* head)
 	printf("Change your password.\n");
 	printf("\n");
 	char currentPwd[17];
-	int i;
+	int i,k;
 	int pwdSet = 0;
+
+
+
+	while (1)
+	{
+		i = 0;
+		printf("Please input your password.\n");
+		while (1)
+		{
+			if (i > 16) i = 16;
+			currentPwd[i] = _getch();
+			if (currentPwd[i] == '\r')
+			{
+				break;
+			}
+			k = i;
+			//printf("pwdInput[i] = %c\n", pwdInput[i]);
+			//printf("i = %d\n", i);
+			if (currentPwd[i] == 8 && i != 0)
+			{
+				printf("\b \b");
+				i--;
+				i--;
+			}
+			else if (currentPwd[i] == 8 && i == 0)
+			{
+				i--;
+			}
+			if (currentPwd[k] != 8 && i < 16)
+			{
+				printf("*");
+			}
+			i++;
+		}
+
+		currentPwd[i] = '\0';
+		printf("\nVerifying your password...\n");
+		if (CheckPassword(currentPwd))
+			printf("Password is incorrect!\n\n");
+		else
+		{
+			printf("Your input is correct. Now change your password.\n\n");
+			break;
+		}
+	}
+
+
+
+	/*
 	while (1)
 	{
 		printf("Input current password.\n");
@@ -902,36 +991,96 @@ int  GUI_ManagerPwd(struct items* head)
 			break;
 		}
 	}
-		
+		*/
 
 	char newPwd[17];
 	char newPwdVerify[17];
-	while(1)
+
+	while (1)
 	{
-		while (1)// Input new password
+		i = 0;
+		printf("\nInput new password.\n");
+		while (1)
 		{
-			printf("Input new password.\n");
+			if (i > 16) i = 16;
+			newPwd[i] = _getch();
+			if (newPwd[i] == '\r')
+			{
+				break;
+			}
+			k = i;
+			//printf("pwdInput[i] = %c\n", pwdInput[i]);
+			//printf("i = %d\n", i);
+			if (newPwd[i] == 8 && i != 0)
+			{
+				printf("\b \b");
+				i--;
+				i--;
+			}
+			else if (newPwd[i] == 8 && i == 0)
+			{
+				i--;
+			}
+			if (newPwd[k] != 8 && i < 16)
+			{
+				printf("*");
+			}
+			i++;
+		}
+
+		newPwd[i] = '\0';
+		if (strlen(newPwd) < 6 || strlen(newPwd) > 20)
+		{
+			printf("\nInput a password between 6 to 20 characters!\n");
+			continue;
+		}
+		
+		while (1)
+		{
 			i = 0;
+			printf("\nInput new password again.\n");
 			while (1)
 			{
 				if (i > 16) i = 16;
-				newPwd[i] = _getch();
-				if (newPwd[i] == '\r')
+				newPwdVerify[i] = _getch();
+				if (newPwdVerify[i] == '\r')
 				{
 					break;
 				}
-				else if (i < 16)
+				k = i;
+				//printf("pwdInput[i] = %c\n", pwdInput[i]);
+				//printf("i = %d\n", i);
+				if (newPwdVerify[i] == 8 && i != 0)
+				{
+					printf("\b \b");
+					i--;
+					i--;
+				}
+				else if (newPwdVerify[i] == 8 && i == 0)
+				{
+					i--;
+				}
+				if (newPwdVerify[k] != 8 && i < 16)
 				{
 					printf("*");
 				}
 				i++;
 			}
-			newPwd[i] = '\0';
-			if (strlen(newPwd)<6 || strlen(newPwd)>20)
-				printf("\nInput a password between 6 to 20 characters!\n\n");
-			else 
+
+			newPwdVerify[i] = '\0';
+			if (strcmp(newPwd, newPwdVerify) != 0)
+				printf("\nInputs are not same!\n\n");
+			else
+			{
+				pwdSet = 1;
 				break;
+			}
+			
 		}
+		if (pwdSet) break;
+
+
+		/*
 		while (1)
 		{
 			printf("\nInput new password again.\n");
@@ -961,9 +1110,12 @@ int  GUI_ManagerPwd(struct items* head)
 				
 		}
 		if (pwdSet)
+		{
 			break;
+		}
+			
 		
-
+*/
 
 	}
 	printf("\nStoring your new password...\n\n");
