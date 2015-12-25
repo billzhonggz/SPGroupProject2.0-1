@@ -360,12 +360,14 @@ int GUI_CustomerNumber(struct items* head, int itemID)
 	totalPrice=CalculatePrice(head,customerBuyNumber,itemID);
 	printf("You will buy %d %s. You should pay %.2f in total.\n",customerBuyNumber,customerSearchResult->name,totalPrice);
 	printf("\n");
-	int paid;
+	double paid;
 	double change;
 	while(1)
 	{
 		printf("YOU PAY : \n");
-		scanf("%d", &paid);
+		scanf("%lf", &paid);
+		char c;
+		while ((c = getchar()) != '\n' && c != EOF);
 		change = paid - totalPrice;
 		if (change >= 0)
 			break;
@@ -716,6 +718,10 @@ int GUI_ManagerItem(struct items* head)
 		{
 			break;
 		}
+		else
+		{
+			printf("Invalid Input!Please input again!");
+		}
 
 	}
 
@@ -805,7 +811,7 @@ int GUI_ManagerItem(struct items* head)
 			scanf("%d", &delID);
 			char c;
 			while ((c = getchar()) != '\n' && c != EOF);
-			if (delID <= 0 || delID >= id)
+			if (delID < 0 || delID >= id)
 			{
 				printf("Invalid Input!Please input again!");
 			}
