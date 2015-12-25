@@ -11,7 +11,14 @@
 int Entrance(int softwareStatus) {
 	struct items *itemList;
 	itemList = LoadItemList();
-
+	int loginReturn;
+	int GUI_CustomerMainReturn;
+	int GUI_CustomerNumberReturn;
+	int GUI_ManagerMainReturn;
+	int GUI_ManagerInventoryReturn;
+	int GUI_ManagerPriceReturn;
+	int GUI_ManagerItemReturn;
+	int GUI_ManagerPwdReturn;
 	// first start
 	if (softwareStatus) // check if the first time running this program.
 	{
@@ -24,16 +31,10 @@ int Entrance(int softwareStatus) {
 			ChangeConfigInt("#softwareStatus", 0);
 			Sleep(1500);
 		}
+
 	}
 	// second start
-	int loginReturn;
-	int GUI_CustomerMainReturn;
-	int GUI_CustomerNumberReturn;
-	int GUI_ManagerMainReturn;
-	int GUI_ManagerInventoryReturn;
-	int GUI_ManagerPriceReturn;
-	int GUI_ManagerItemReturn;
-	int GUI_ManagerPwdReturn;
+
 	while (1)// Login interface (role choices meum)
 	{
 		if ((loginReturn = Login(itemList)) == -1)
@@ -128,7 +129,9 @@ int Entrance(int softwareStatus) {
 							breakToLogin = 1;
 							break;
 						}
+
 					}
+
 				}
 				else if (GUI_ManagerMainReturn == 4)
 				{
@@ -139,7 +142,7 @@ int Entrance(int softwareStatus) {
 							breakToLogin = 1;
 							break;
 						}
-						else if (GUI_ManagerPwdReturn == 1)
+						else if (GUI_ManagerPwdReturn == 1) // Go to GUI_ManagerMain
 						{
 							break;
 						}
@@ -153,11 +156,6 @@ int Entrance(int softwareStatus) {
 		}
 
 	}
-
-
-
-
 	return 0;
-
 }
 
