@@ -1,12 +1,12 @@
 ;debug mode setting
 ;open:1
 ;close:0
-#debugMode 0
+#debugMode 1
 ;0:first open the software
 ;1:not the first time open the software
 #softwareStatus 0
 ;administrator username
 #userNameroot
 ;password(MD5)
-#password 0D107D09F5BBE40CADE3DE5C71E9E9B7
-#passwordcheck 0D107D09F5BBE40CADE3DE5C71E9E9B7
+#password E10ADC3949BA59ABBE56E057F20F883E
+#passwordcheck E10ADC3949BA59ABBE56E057F20F883E

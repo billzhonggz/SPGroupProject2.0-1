@@ -29,11 +29,12 @@ int FirstScreen()
 	char pwd[20];
 	char pwdVerify[20];
 	int i;
-	for( ; ; )
+	while(1)
 	{
-		for (;;)
+		while(1)
 		{
 			printf("Please input your manage password which is between 6 to 16 characters.\n");
+			// print * when password input
 			for (i = 0; i < 20 ; i++)
 			{
 				pwd[i] = _getch();
@@ -113,7 +114,7 @@ int Login(struct items *head)
 		int pwdCheck=0;
 		int i;
 		char pwdInput[20];
-		for ( ; ; )
+		while(1)
 		{
 			printf("Please input your password.\n");
 			for (i = 0; i < 20; i++)
@@ -159,30 +160,44 @@ void GUI_CustomerMain(struct items* head)
 	printf("We offer these drinks! :)\n");
 	printf("ID\tItem\tAmount\tPrice\n");
 	printf("0\tExit\n");
-	int id=1;
+	int id = 1;
 	while (customerList)
 	{
 		printf("%d\t%s\t%d\t%.2f\n",id,customerList->name,customerList->amount,customerList->price);
 		customerList=customerList->next;
 		id++;
 	}
+	id--;
+	//printf("id = %d",id);
 	//Get user input.
 	printf("\n");
-	int customerItemChoice;
-	for (;;)
+	int customerItemChoice = -1;
+	//for (;;)
 	{
 		printf("Please input your choice by typing the item number. Type 0 to go back.\n");
 		printf("\n");
 		printf("YOU CHOOSE:    ");
-		scanf("%d", &customerItemChoice);
-		if (customerItemChoice == 0)
-			Login(head);
-		else if (customerItemChoice > id)
-			printf("Invaild input!\n");
-		else
-			break;
+		while(1)
+		{
+			scanf("%d", &customerItemChoice);
+			if (customerItemChoice == 0)
+			{
+				Login(head);
+			}
+			else if(customerItemChoice > id || customerItemChoice <0)
+			{
+				printf("Invaild input! Please input again!\n");
+				char c;
+				// empty io buffer
+				while((c = getchar()) != '\n' && c != EOF);
+			}
+			else
+			{
+				GUI_CustomerNumber(head,customerItemChoice);
+				break;
+			}
+		}
 	}
-	GUI_CustomerNumber(head,customerItemChoice);
 }
 
 void GUI_CustomerNumber(struct items* head, int itemID)
@@ -198,19 +213,28 @@ void GUI_CustomerNumber(struct items* head, int itemID)
 	printf("\n");
 	struct items *customerSearchResult;
 	customerSearchResult=SearchItem(head,itemID);
-	if (customerSearchResult==NULL)
-		printf("Invalid input!\n");
+	// if (customerSearchResult==NULL)
+	//	printf("Invalid input!\n");
 	printf("Your choice is %s. Avibile amount is %d. Unit price is %.2f.\n",customerSearchResult->name,customerSearchResult->amount,customerSearchResult->price);
 	printf("\n");
-	int customerBuyNumber;
-	for (;;)
+	int customerBuyNumber = -1;
+	while(1)
 	{
 		printf("How many %s you want to buy?\n", customerSearchResult->name);
 		printf("NUMBER YOU WANT TO BUY IS  ");
 		scanf("%d", &customerBuyNumber);
+		char c;
+		while((c = getchar()) != '\n' && c != EOF);
 		printf("\n");
-		if (customerBuyNumber > customerSearchResult->amount)
-			printf("No enough inventory!\n");
+		if (customerBuyNumber <= 0)
+		{
+			printf("Input Invalid! Please input again!\n");
+		}
+		else if (customerBuyNumber > customerSearchResult->amount )
+		{
+			printf("No enough inventory!\n Please input again!\n");
+			printf("customerBuyNumber = %d",customerBuyNumber);
+		}
 		else
 			break;
 	}
@@ -353,8 +377,9 @@ void GUI_ManagerInventory(struct items* head)
 	printf("\n");
 	printf("INPUT  ");
 	//Exit this function.
-	int inventoryBack;
+	int inventoryBack = -1;
 	scanf("%d", &inventoryBack);
+	
 	switch (inventoryBack)
 	{
 		case 1: GUI_ManagerInventory(head);
@@ -656,6 +681,7 @@ void GUI_ManagerPwd(struct items* head)
 	printf("INPUT  ");
 	int pwdBack;
 	scanf("%d", &pwdBack);
+	while((c = getchar()) != '\n' && c != EOF);
 	switch (pwdBack)
 	{
 	case 1: GUI_ManagerMain(head);
